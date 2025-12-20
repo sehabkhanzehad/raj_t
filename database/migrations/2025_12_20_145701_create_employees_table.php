@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_leaders', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('section_id')->constrained()->restrictOnDelete();
-            $table->foreignId('pilgrim_id')->unique()->constrained()->restrictOnDelete();
-            $table->string('group_name')->nullable();
+            $table->string('first_name');
+            $table->string('last_name')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('position')->nullable();
+            $table->date('hire_date')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('group_leaders');
+        Schema::dropIfExists('employees');
     }
 };

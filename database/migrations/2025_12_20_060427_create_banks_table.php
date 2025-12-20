@@ -13,11 +13,21 @@ return new class extends Migration
     {
         Schema::create('banks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('section_id')->constrained()->restrictOnDelete();
             $table->string('branch');
-            $table->string('account_name');
+            $table->string('name');
             $table->string('account_number');
-            // $table->decimal('current_balance', 15, 2)->default(0);
+            $table->string('account_holder_name');
+            $table->text('address');
+            $table->string('account_type')->nullable(); // e.g., Savings, Current
+            $table->string('routing_number')->nullable();
+            $table->string('swift_code')->nullable();
+            $table->date('opening_date')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('telephone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('website')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

@@ -10,6 +10,11 @@ class GroupLeader extends Model
 {
     protected $guarded = ['id'];
 
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
+    }
+
     public function profile(): BelongsTo
     {
         return $this->belongsTo(Pilgrim::class, 'pilgrim_id');

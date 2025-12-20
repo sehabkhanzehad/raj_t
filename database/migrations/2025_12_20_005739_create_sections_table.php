@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_leaders', function (Blueprint $table) {
+        Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('section_id')->constrained()->restrictOnDelete();
-            $table->foreignId('pilgrim_id')->unique()->constrained()->restrictOnDelete();
-            $table->string('group_name')->nullable();
-            $table->boolean('status')->default(true);
+            $table->string('code')->unique(); // Example: 201.1, 201.2, 401.1, etc.
+            $table->string('name');
+            $table->string('type');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('group_leaders');
+        Schema::dropIfExists('sections');
     }
 };
