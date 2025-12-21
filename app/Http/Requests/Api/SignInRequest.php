@@ -26,12 +26,13 @@ class SignInRequest extends FormRequest
         return [
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            'remember' => ['boolean'],
         ];
     }
 
     public function authenticate(): bool
     {
-        return Auth::attempt($this->only('email', 'password'));
+        return Auth::attempt($this->only('email', 'password'), $this->boolean('remember'));
     }
 
     public function authenticatedUser(): User

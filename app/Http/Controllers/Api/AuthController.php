@@ -14,7 +14,10 @@ class AuthController extends Controller
     {
         if (!$request->authenticate()) return $this->error('Invalid credentials.', 401);
 
-        $token = $request->authenticatedUser()->createToken('auth_token')->plainTextToken;
+        $token = $request->authenticatedUser()->createToken(
+            'auth_token',
+            expiresAt: $request->remember ? now()->addYear() : now()->addDay()
+        )->plainTextToken;
 
         return $this->success(
             "Sign in successful.",
