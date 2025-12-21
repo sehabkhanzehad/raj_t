@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique(); // Example: 201.1, 201.2, 401.1, etc.
+            $table->string('code')->nullable()->unique(); // Example: 201.1, 201.2, 401.1, etc.
             $table->string('name');
             $table->string('type');
             $table->string('description')->nullable();

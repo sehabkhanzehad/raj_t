@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -44,5 +45,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    public function loans(): MorphMany
+    {
+        return $this->morphMany(Loan::class, 'loanable');
+    }
+
+    public function lends(): MorphMany // Raj Travels gave money
+    {
+        return $this->loans()->where('direction', 'lend');
+    }
+
+    public function borrows(): MorphMany // Raj Travels took money
+    {
+        return $this->loans()->where('direction', 'borrow');
     }
 }

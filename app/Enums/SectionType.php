@@ -8,5 +8,6 @@ enum SectionType: string
     case Employee = 'employee';
     case GroupLeader = 'group_leader';
     case Bill = 'bill';
+    case Loan = 'loan';
     case Other = 'other';
 }
