@@ -18,14 +18,14 @@ class GroupLeaderResource extends JsonResource
             'type' => 'group-leader',
             'id' => $this->id,
             'attributes' => [
-                'name' => $this->name,
+                'groupName' => $this->group_name,
                 'status' => $this->status,
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],
             'relationships' => [
                 'section' => new SectionResource($this->whenLoaded('section')),
-                'pilgrim' => new PilgrimResource($this->whenLoaded('pilgrim')),
+                'profile' => new PilgrimResource($this->whenLoaded('profile')),
             ],
         ];
     }

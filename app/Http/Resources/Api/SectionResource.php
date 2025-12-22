@@ -24,6 +24,7 @@ class SectionResource extends JsonResource
             ],
             'relationships' => [
                 "bank" => new BankResource($this->whenLoaded('bank')),
+                "groupLeader" => new GroupLeaderResource($this->whenLoaded('groupLeader')),
             ],
         ];
     }

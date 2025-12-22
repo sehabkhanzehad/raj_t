@@ -13,8 +13,10 @@ class PilgrimResource extends JsonResource
             'type' => 'pilgrim',
             'id' => $this->id,
             'attributes' => [
-                'name' => $this->name,
-                'email' => $this->email,
+                'firstName' => $this->first_name,
+                'lastName' => $this->last_name,
+                'motherName' => $this->mother_name,
+                'fatherName' => $this->father_name,
                 'phone' => $this->phone,
                 'nid' => $this->nid,
                 'dateOfBirth' => $this->date_of_birth,

@@ -41,4 +41,9 @@ class Section extends Model
     {
         return $query->whereType(SectionType::Bank);
     }
+
+    public function scopeTypeGroupLeader($query)
+    {
+        return $query->whereType(SectionType::GroupLeader);
+    }
 }
