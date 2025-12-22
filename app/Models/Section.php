@@ -56,4 +56,14 @@ class Section extends Model
     {
         return $query->whereType(SectionType::Bill);
     }
+
+    // public function scopeTypeLoan($query)
+    // {
+    //     return $query->whereType(SectionType::Loan);
+    // }
+
+    public function scopeTypeOther($query)
+    {
+        return $query->whereType(SectionType::Other);
+    }
 }

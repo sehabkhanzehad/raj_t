@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('banks')->group(function () {
             Route::get('/', [BankSectionController::class, 'index']);
             Route::post('/', [BankSectionController::class, 'store']);
+            Route::put('/{section}', [BankSectionController::class, 'update']);
         });
 
         Route::prefix('group-leaders')->group(function () {
@@ -38,7 +39,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{section}', [BillSectionController::class, 'update']);
         });
 
-        Route::put('/{section}', [SectionController::class, 'update']);
+        Route::prefix("others")->group(function () {
+            Route::get('/', [SectionController::class, 'index']);
+            Route::post('/', [SectionController::class, 'store']);
+            Route::put('/{section}', [SectionController::class, 'update']);
+        });
+
         Route::delete('/{section}', [SectionController::class, 'destroy']);
     });
 
