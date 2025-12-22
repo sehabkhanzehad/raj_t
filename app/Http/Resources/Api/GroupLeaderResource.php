@@ -5,7 +5,7 @@ namespace App\Http\Resources\Api;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class YearResource extends JsonResource
+class GroupLeaderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,16 +15,17 @@ class YearResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'Year',
+            'type' => 'group-leader',
             'id' => $this->id,
             'attributes' => [
                 'name' => $this->name,
-                'startDate' => $this->start_date,
-                'endDate' => $this->end_date,
                 'status' => $this->status,
-                'isActive' => $this->isActive(),
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
+            ],
+            'relationships' => [
+                'section' => new SectionResource($this->whenLoaded('section')),
+                'pilgrim' => new PilgrimResource($this->whenLoaded('pilgrim')),
             ],
         ];
     }

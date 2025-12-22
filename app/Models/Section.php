@@ -35,4 +35,10 @@ class Section extends Model
     {
         return $this->hasOne(Bill::class);
     }
+
+    // Scopes
+    public function scopeTypeBank($query)
+    {
+        return $query->whereType(SectionType::Bank);
+    }
 }

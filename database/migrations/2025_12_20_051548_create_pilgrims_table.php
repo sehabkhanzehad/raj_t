@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('nid')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->text('address')->nullable();
-            $table->enum('gender', ['male', 'female']);
+            $table->enum('gender', ['male', 'female', 'other']);
             $table->text('notes')->nullable();
             $table->timestamps();
         });

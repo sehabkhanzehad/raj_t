@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('account_number');
             $table->string('account_holder_name');
             $table->text('address');
-            $table->string('account_type')->nullable(); // e.g., Savings, Current
+            $table->string('account_type');
+
             $table->string('routing_number')->nullable();
             $table->string('swift_code')->nullable();
             $table->date('opening_date')->nullable();

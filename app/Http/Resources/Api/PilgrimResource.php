@@ -5,24 +5,22 @@ namespace App\Http\Resources\Api;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class YearResource extends JsonResource
+class PilgrimResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'Year',
+            'type' => 'pilgrim',
             'id' => $this->id,
             'attributes' => [
                 'name' => $this->name,
-                'startDate' => $this->start_date,
-                'endDate' => $this->end_date,
-                'status' => $this->status,
-                'isActive' => $this->isActive(),
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'nid' => $this->nid,
+                'dateOfBirth' => $this->date_of_birth,
+                'address' => $this->address,
+                'gender' => $this->gender,
+                'notes' => $this->notes,
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],
