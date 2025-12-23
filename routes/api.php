@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\BorrowingSectionController;
 use App\Http\Controllers\Api\EmployeeSectionController;
 use App\Http\Controllers\Api\GroupLeaderController;
 use App\Http\Controllers\Api\GroupLeaderSectionController;
+use App\Http\Controllers\Api\HajjPackageController;
+use App\Http\Controllers\Api\UmrahPackageController;
 use App\Http\Controllers\Api\LendingSectionController;
 use App\Http\Controllers\Api\PreRegistrationController;
 use App\Http\Controllers\Api\SectionController;
@@ -16,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 require __DIR__ . '/api/auth.php';
 
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::prefix('group-leaders')->group(function () {
         Route::get('/', [GroupLeaderController::class, 'index']);
         Route::post('/', [GroupLeaderController::class, 'store']);
@@ -32,6 +33,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [PreRegistrationController::class, 'store']);
         Route::put('/{preRegistration}', [PreRegistrationController::class, 'update']);
         Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
+    });
+
+    Route::prefix('hajj-packages')->group(function () {
+        Route::get('/', [HajjPackageController::class, 'index']);
+        Route::post('/', [HajjPackageController::class, 'store']);
+        Route::put('/{package}', [HajjPackageController::class, 'update']);
+        Route::delete('/{package}', [HajjPackageController::class, 'destroy']);
+    });
+    Route::prefix('umrah-packages')->group(function () {
+        Route::get('/', [UmrahPackageController::class, 'index']);
+        Route::post('/', [UmrahPackageController::class, 'store']);
+        Route::put('/{package}', [UmrahPackageController::class, 'update']);
+        Route::delete('/{package}', [UmrahPackageController::class, 'destroy']);
     });
 
     Route::prefix('sections')->group(function () {

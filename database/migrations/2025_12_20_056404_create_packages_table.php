@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('year_id')->constrained()->restrictOnDelete();
-            $table->enum('type', ['hajj', 'umrah']);
+            $table->string('type');
             $table->string('name');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
@@ -23,6 +23,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
+
+            $table->index(['type', 'status']);
         });
     }
 

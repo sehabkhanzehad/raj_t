@@ -16,6 +16,11 @@ class Year extends Model
     protected $guarded = ['id'];
 
     // Relationships
+    public function packages(): HasMany
+    {
+        return $this->hasMany(Package::class);
+    }
+
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);

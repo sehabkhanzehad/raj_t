@@ -33,3 +33,5 @@ return new class extends Migration
         Schema::dropIfExists('pilgrim_logs');
     }
 };
+
+// tODO: IF PAID AMOUNT THEN ALSO ADD LOG, AND CONNECT WITH TRANSACTIONS 
