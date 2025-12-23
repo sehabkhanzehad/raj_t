@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Year extends Model
 {
@@ -14,6 +15,12 @@ class Year extends Model
 
     protected $guarded = ['id'];
 
+    // Relationships
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     // Helpers
     public function isActive(): bool
     {
@@ -24,5 +31,10 @@ class Year extends Model
     public function scopeActive($query)
     {
         return $query->where('status', true);
+    }
+
+    public static function getCurrentYear(): ?Year
+    {
+        return self::active()->first();
     }
 }

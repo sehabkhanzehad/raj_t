@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('section_id')->constrained()->restrictOnDelete();
-            $table->string('first_name');
-            $table->string('last_name')->nullable();
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
+            $table->foreignId('user_id')->unique()->constrained()->restrictOnDelete();
+            $table->foreignId('section_id')->unique()->constrained()->restrictOnDelete();
             $table->string('position')->nullable();
             $table->date('hire_date')->nullable();
             $table->boolean('status')->default(true);

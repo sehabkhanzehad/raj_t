@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\Api\BankSectionController;
 use App\Http\Controllers\Api\BillSectionController;
+use App\Http\Controllers\Api\BorrowingSectionController;
 use App\Http\Controllers\Api\EmployeeSectionController;
 use App\Http\Controllers\Api\GroupLeaderSectionController;
+use App\Http\Controllers\Api\LendingSectionController;
+use App\Http\Controllers\Api\LoanSectionController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\YearController;
@@ -12,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 require __DIR__ . '/api/auth.php';
 
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::prefix('sections')->group(function () {
-
         Route::prefix('banks')->group(function () {
             Route::get('/', [BankSectionController::class, 'index']);
             Route::post('/', [BankSectionController::class, 'store']);
@@ -46,10 +47,26 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         Route::delete('/{section}', [SectionController::class, 'destroy']);
+
+        Route::prefix('loans')->group(function () {
+            Route::prefix('lendings')->group(function () {
+                Route::get('/', [LendingSectionController::class, 'index']);
+                Route::post('/', [LendingSectionController::class, 'store']);
+                Route::put('/{lending}', [LendingSectionController::class, 'update']);
+                Route::delete('/{lending}', [LendingSectionController::class, 'destroy']);
+            });
+
+            Route::prefix('borrowings')->group(function () {
+                Route::get('/', [BorrowingSectionController::class, 'index']);
+                Route::post('/', [BorrowingSectionController::class, 'store']);
+                Route::put('/{borrowing}', [BorrowingSectionController::class, 'update']);
+                Route::delete('/{borrowing}', [BorrowingSectionController::class, 'destroy']);
+            });
+        });
     });
 
-
     // User profile routes
+    Route::get('users', [UserController::class, 'index']);
     Route::put('user', [UserController::class, 'update']);
     Route::post('user/change-password', [UserController::class, 'changePassword']);
 

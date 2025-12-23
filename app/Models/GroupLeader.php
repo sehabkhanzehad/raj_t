@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GroupLeader extends Model
 {
+    protected $casts = [
+        'status' => 'boolean',
+    ];
     protected $guarded = ['id'];
 
     public function section(): BelongsTo
@@ -15,9 +18,9 @@ class GroupLeader extends Model
         return $this->belongsTo(Section::class);
     }
 
-    public function profile(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Pilgrim::class, 'pilgrim_id');
+        return $this->belongsTo(User::class);
     }
 
     public function activePreRegistrations(): HasMany

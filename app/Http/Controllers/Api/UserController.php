@@ -6,9 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\Api\UserResource;
+use App\Models\User;
 
 class UserController extends Controller
 {
+    /**
+     * Get users for selection
+     */
+    public function index(Request $request)
+    {
+        return UserResource::collection(User::paginate($request->get('per_page', 50)));
+    }
+
     /**
      * Update user profile information
      */

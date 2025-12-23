@@ -25,7 +25,7 @@ class GroupLeaderResource extends JsonResource
             ],
             'relationships' => [
                 'section' => new SectionResource($this->whenLoaded('section')),
-                'profile' => new PilgrimResource($this->whenLoaded('profile')),
+                'user' => new UserResource($this->whenLoaded('user')),
             ],
         ];
     }

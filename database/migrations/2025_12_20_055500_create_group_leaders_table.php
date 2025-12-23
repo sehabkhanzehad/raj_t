@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('group_leaders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('section_id')->constrained()->restrictOnDelete();
-            $table->foreignId('pilgrim_id')->unique()->constrained()->restrictOnDelete();
-            $table->string('group_name')->nullable();
+            $table->foreignId('user_id')->unique()->constrained()->restrictOnDelete();
+            $table->foreignId('section_id')->unique()->constrained()->restrictOnDelete();
+            $table->string('group_name');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

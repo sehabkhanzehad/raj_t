@@ -14,6 +14,12 @@ class Employee extends Model
 
     protected $guarded = ['id'];
 
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);

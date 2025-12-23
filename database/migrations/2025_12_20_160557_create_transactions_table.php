@@ -15,18 +15,20 @@ return new class extends Migration
             $table->id();
             $table->foreignId('year_id')->constrained()->restrictOnDelete();
             $table->foreignId('section_id')->constrained()->restrictOnDelete();
+            $table->foreignId('loan_id')->nullable()->constrained()->restrictOnDelete();
 
+            // $table->foreignId('registration_id')->nullable()->constrained();
 
-            $table->foreignId('registration_id')->nullable()->constrained();
-
-            // লোন বা ধার এর জন্য আলাদা ট্র্যাকিং (Optional)
-            $table->string('contact_person')->nullable(); // কার থেকে ধার নেয়া হয়েছে
-
-            $table->enum('type', ['credit', 'debit']); // Credit=Income/Opening, Debit=Expense/Loan Paid
+            $table->enum('type', ['income', 'expense']); // Credit=Income/Opening, Debit=Expense/Loan Paid
             $table->decimal('amount', 15, 2);
-            $table->date('transaction_date');
-            $table->string('reference')->nullable(); // Voucher No / Trx ID
+            $table->decimal('after_balance', 15, 2);
+            $table->decimal('before_balance', 15, 2);
+            $table->date('date');
+
             $table->text('description')->nullable();
+            $table->string('voucher_no')->nullable();
+
+            // $table->string('reference')->nullable();
             $table->timestamps();
         });
     }

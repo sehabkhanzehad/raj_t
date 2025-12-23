@@ -13,16 +13,9 @@ return new class extends Migration
     {
         Schema::create('pilgrims', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name')->nullable();
-            $table->string('mother_name')->nullable();
-            $table->string('father_name')->nullable();
-            $table->string('phone');
             $table->string('passport_number')->nullable()->unique();
             $table->string('nid')->nullable();
-            $table->date('date_of_birth')->nullable();
             $table->text('address')->nullable();
-            $table->enum('gender', ['male', 'female', 'other']);
             $table->text('notes')->nullable();
             $table->timestamps();
         });

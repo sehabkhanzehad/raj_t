@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SectionType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Section extends Model
@@ -36,6 +37,11 @@ class Section extends Model
         return $this->hasOne(Bill::class);
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     // Scopes
     public function scopeTypeBank($query)
     {
@@ -57,10 +63,15 @@ class Section extends Model
         return $query->whereType(SectionType::Bill);
     }
 
-    // public function scopeTypeLoan($query)
-    // {
-    //     return $query->whereType(SectionType::Loan);
-    // }
+    public function scopeTypeLend($query)
+    {
+        return $query->whereType(SectionType::Lend);
+    }
+
+    public function scopeTypeBorrow($query)
+    {
+        return $query->whereType(SectionType::Borrow);
+    }
 
     public function scopeTypeOther($query)
     {

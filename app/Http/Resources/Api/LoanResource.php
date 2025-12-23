@@ -5,27 +5,23 @@ namespace App\Http\Resources\Api;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EmployeeResource extends JsonResource
+class LoanResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'employee',
+            'type' => 'loan',
             'id' => $this->id,
             'attributes' => [
-                'position' => $this->position,
-                'hireDate' => $this->hire_date,
-                'status' => $this->status,
+                'amount' => $this->amount,
+                'direction' => $this->direction,
+                'date' => $this->date ? $this->date->format('Y-m-d') : null,
+                'description' => $this->description,
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],
             'relationships' => [
-                'user' => new UserResource($this->whenLoaded('user')),
+                'loanable' => new UserResource($this->whenLoaded('loanable')),
             ],
         ];
     }
