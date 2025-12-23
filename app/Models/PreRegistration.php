@@ -11,7 +11,7 @@ class PreRegistration extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'registration_date' => 'date',
+        'date' => 'date',
         'archive_date' => 'date',
         'status' => PreRegistrationStatus::class,
     ];
@@ -31,7 +31,6 @@ class PreRegistration extends Model
     }
 
     // Scopes
-
     public function scopeActive($query)
     {
         return $query->whereStatus(PreRegistrationStatus::Active);

@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\BorrowingSectionController;
 use App\Http\Controllers\Api\EmployeeSectionController;
 use App\Http\Controllers\Api\GroupLeaderSectionController;
 use App\Http\Controllers\Api\LendingSectionController;
-use App\Http\Controllers\Api\LoanSectionController;
+use App\Http\Controllers\Api\PreRegistrationController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\YearController;
@@ -15,6 +15,20 @@ use Illuminate\Support\Facades\Route;
 require __DIR__ . '/api/auth.php';
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('pre-registrations/group-leaders', [PreRegistrationController::class, 'groupLeaders']);
+    Route::get('pre-registrations/banks', [PreRegistrationController::class, 'banks']);
+
+    Route::prefix('pre-registrations')->group(function () {
+        Route::get('/', [PreRegistrationController::class, 'index']);
+        Route::post('/', [PreRegistrationController::class, 'store']);
+        Route::put('/{preRegistration}', [PreRegistrationController::class, 'update']);
+        Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
+    });
+
+
+
+
     Route::prefix('sections')->group(function () {
         Route::prefix('banks')->group(function () {
             Route::get('/', [BankSectionController::class, 'index']);

@@ -10,5 +10,7 @@ enum SectionType: string
     case Bill = 'bill';
     case Lend = 'lend';
     case Borrow = 'borrow';
+        // case PreRegistration = 'pre_registration';
+        // case Registration = 'registration';
     case Other = 'other';
 }

@@ -10,7 +10,7 @@ class BankResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "type" => "Bank",
+            "type" => "bank",
             "id" => $this->id,
             "attributes" => [
                 "name" => $this->name,

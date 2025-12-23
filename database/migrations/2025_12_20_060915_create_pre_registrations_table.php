@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('serial_no'); // Govt Pre-Reg ID
             $table->string('bank_voucher_no')->nullable();
 
-            $table->date('registration_date');
-            $table->date('archive_date')->nullable();
+            $table->date('date');
             $table->string('status')->default('active');
+            $table->date('archive_date')->nullable();
 
             $table->timestamps();
         });

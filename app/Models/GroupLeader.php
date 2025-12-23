@@ -25,12 +25,18 @@ class GroupLeader extends Model
 
     public function activePreRegistrations(): HasMany
     {
-        return $this->hasMany(PreRegistration::class)->active();
+        return $this->preRegistrations()->active();
     }
+
+    public function preRegistrations(): HasMany // All Pre-Registrations
+    {
+        return $this->hasMany(PreRegistration::class);
+    }
+
 
     // এই লিডারের কাছ থেকে যারা অন্য লিডারের কাছে চলে গেছে (History)
     // public function transferredOut()
-    // {
+    // {s
     //     return $this->hasMany(RegistrationTransfer::class, 'from_leader_id');
     // }
 

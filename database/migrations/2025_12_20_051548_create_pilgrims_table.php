@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('pilgrims', function (Blueprint $table) {
             $table->id();
-            $table->string('passport_number')->nullable()->unique();
-            $table->string('nid')->nullable();
-            $table->text('address')->nullable();
+            $table->foreignId('user_id')->constrained()->restrictOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

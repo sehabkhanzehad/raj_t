@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\SectionType;
 use App\Models\Section;
 use App\Models\User;
+use App\Models\Year;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+        Year::create([
+            "name" => "Hajj 2026",
+            "start_date" => "2025-06-01",
+            "end_date" => "2026-05-31",
+            "status" => true,
+        ]);
+
         User::updateOrCreate(
             ['email' => 'test@example.com'],
             [
@@ -33,6 +42,15 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Lending & Collection',
                 'type' => SectionType::Lend,
                 'description' => 'Lending & Collection Section',
+            ]
+        );
+
+        Section::updateOrCreate(
+            ['code' => '101.00'],
+            [
+                'name' => 'Borrowing & Payment',
+                'type' => SectionType::Borrow,
+                'description' => 'Borrowing & Payment Section',
             ]
         );
 

@@ -57,6 +57,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->morphMany(Loan::class, 'loanable');
     }
 
+    public function pilgrim(): HasOne
+    {
+        return $this->hasOne(Pilgrim::class);
+    }
+
+    // Helpers
     public function fullName(): string
     {
         return $this->first_name . ' ' . ($this->last_name ?? '');
