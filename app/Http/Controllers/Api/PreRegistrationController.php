@@ -117,6 +117,7 @@ class PreRegistrationController extends Controller
             "is_married" => ["required", "boolean"],
             'date_of_birth' => ['nullable', 'date'],
             'nid' => ['required', 'string', 'max:100', 'unique:users,nid,' . $preRegistration->pilgrim->user->id],
+            'status' => ['required', Rule::in(PreRegistrationStatus::values())],
             'serial_no' => ['required', 'string', 'max:100'],
             'bank_voucher_no' => ['nullable', 'string', 'max:100'],
             'date' => ['required', 'date'],
@@ -143,6 +144,7 @@ class PreRegistrationController extends Controller
             'serial_no' => $request->serial_no,
             'bank_voucher_no' => $request->bank_voucher_no ?? null,
             'date' => $request->date,
+            'status' => $request->status,
         ]);
 
         return $this->success("Pre-registration updated successfully.");

@@ -38,7 +38,7 @@ class TransactionController extends Controller
 
     public function sections(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::orderBy('name')->get());
+        return SectionResource::collection(Section::with('groupLeader')->orderBy('name')->get());
     }
 
     public function loans(): AnonymousResourceCollection
@@ -48,7 +48,7 @@ class TransactionController extends Controller
 
     public function preRegistrations(): JsonResponse
     {
-        $preRegistrations = PreRegistration::active()->with('pilgrim.user', 'groupLeader')->get()->map(function ($preRegistration) {
+        $preRegistrations = PreRegistration::with('pilgrim.user', 'groupLeader')->get()->map(function ($preRegistration) {
             return [
                 "type" => "pre-registration",
                 "id" => $preRegistration->id,

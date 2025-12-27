@@ -145,6 +145,11 @@ class Section extends Model
         return $this->isType(SectionType::Lend) || $this->isType(SectionType::Borrow);
     }
 
+    public function isGroupLeader(): bool
+    {
+        return $this->isType(SectionType::GroupLeader);
+    }
+
     public function needToAddReferences(): bool
     {
         return in_array($this->type, [
