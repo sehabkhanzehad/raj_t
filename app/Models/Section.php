@@ -120,6 +120,12 @@ class Section extends Model
             }
         }
 
+        if ($this->isGroupLeader()) {
+            return $request->isIncome()
+                ? $this->currentBalance() + $request->amount
+                : $this->currentBalance() - $request->amount;
+        }
+
         return $request->isIncome()
             ? $this->currentBalance() - $request->amount
             : $this->currentBalance() + $request->amount;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\SectionResource;
+use App\Http\Resources\Api\TransactionResource;
 use App\Models\GroupLeader;
 use App\Models\Section;
 use App\Models\User;
@@ -117,5 +118,10 @@ class GroupLeaderSectionController extends Controller
         });
 
         return $this->success("Section updated successfully.");
+    }
+
+    public function transactions(Section $section): AnonymousResourceCollection
+    {
+        return TransactionResource::collection($section->transactions()->latest()->paginate(request()->get('per_page', 10)));
     }
 }
