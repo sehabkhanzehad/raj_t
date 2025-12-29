@@ -10,6 +10,7 @@ use App\Http\Resources\Api\CurrentUserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -26,7 +27,8 @@ class UserController extends Controller
     public function update(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
@@ -35,13 +37,15 @@ class UserController extends Controller
 
         if ($request->has('avatar')) {
             $user->deleteAvatar();
-
+            
             $user->avatar = $request->hasFile('avatar')
                 ? $request->file('avatar')->store('avatars')
                 : null;
         }
 
-        $user->name = $request->name;
+        // Update user fields
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->save();
 
