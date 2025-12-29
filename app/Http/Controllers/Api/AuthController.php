@@ -30,11 +30,6 @@ class AuthController extends Controller
         );
     }
 
-    public function user(Request $request): CurrentUserResource
-    {
-        return CurrentUserResource::make($request->user());
-    }
-
     public function signOut(Request $request): JsonResponse
     {
         $request->user()->tokens()->delete();

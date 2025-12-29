@@ -19,7 +19,18 @@ class CurrentUserResource extends JsonResource
             'id' => $this->id,
             'attributes' => [
                 'name' => $this->first_name . ' ' . ($this->last_name ?? ''),
+                'firstName' => $this->first_name,
+                'lastName' => $this->last_name,
+                'avatar' => $this->avatar ?? null,
                 'email' => $this->email,
+                'phone' => $this->phone,
+                'gender' => $this->gender,
+                'isMarried' => $this->is_married,
+                'nid' => $this->nid,
+                'dateOfBirth' => $this->date_of_birth,
+                'address' => $this->address,
+                'createdAt' => $this->created_at,
+                'updatedAt' => $this->updated_at,
             ],
         ];
     }

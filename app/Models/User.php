@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasAvatar;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\MustVerifyEmail as HasMustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use HasAvatar;
     use HasApiTokens,
         HasFactory,
         HasMustVerifyEmail,
@@ -66,5 +68,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function fullName(): string
     {
         return $this->first_name . ' ' . ($this->last_name ?? '');
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->fullName();
+    }
+
+    public function setNameAttribute(string $value): void
+    {
+        $parts = explode(' ', $value, 2);
+        $this->first_name = $parts[0];
+        $this->last_name = $parts[1] ?? null;
     }
 }
