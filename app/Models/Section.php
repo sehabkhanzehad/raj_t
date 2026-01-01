@@ -82,7 +82,7 @@ class Section extends Model
 
     public function scopeTypeOther($query)
     {
-        return $query->whereType(SectionType::Other);
+        return $query->whereIn('type', [SectionType::Other, SectionType::Registration, SectionType::PreRegistration]);
     }
 
     // Helpers
