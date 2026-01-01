@@ -45,16 +45,10 @@ Route::get('/health-check', function () {
                 'url' => config('app.url'),
                 'timezone' => config('app.timezone'),
             ],
-            'database' => [
+            'database' => array_merge([
                 'connected' => $dbConnected,
-                'error' => $dbError,
-                'environment' => $dbInfo['environment'],
-                'host' => $dbInfo['host'],
-                'database' => $dbInfo['database'],
-                'connection_type' => $dbInfo['connection'],
-                'is_local' => $dbInfo['is_local'],
-                'is_production' => $dbInfo['is_production'],
-            ],
+                'error' => $dbError
+            ], $dbInfo),
             'server' => [
                 'php_version' => PHP_VERSION,
                 'laravel_version' => app()->version(),

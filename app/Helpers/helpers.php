@@ -11,17 +11,21 @@ if (!function_exists('db_info')) {
         $connection = config('database.default');
         $host = config("database.connections.{$connection}.host");
         $database = config("database.connections.{$connection}.database");
+        $username = config("database.connections.{$connection}.username");
 
-        $isLocal = in_array($host, ['127.0.0.1', 'localhost', '::1']);
-        $environment = $isLocal ? 'LOCAL' : 'PRODUCTION';
+        // Check based on APP_ENV instead of host
+        $isProduction = config('app.env') === 'production';
+        $environment = $isProduction ? 'PRODUCTION' : 'LOCAL';
 
         return [
             'environment' => $environment,
+            'app_env' => config('app.env'),
             'host' => $host,
             'database' => $database,
+            'username' => $username,
             'connection' => $connection,
-            'is_local' => $isLocal,
-            'is_production' => !$isLocal,
+            'is_local' => !$isProduction,
+            'is_production' => $isProduction,
         ];
     }
 }
