@@ -36,6 +36,16 @@ class DatabaseSeeder extends Seeder
                 'gender' => 'male',
             ]
         );
+        User::updateOrCreate(
+            ['email' => 'accounts@msrajtravels.com'],
+            [
+                'first_name' => 'Accounts',
+                'last_name' => '',
+                'username' => 'accounts',
+                'password' => 'raj@accounts',
+                'gender' => 'male',
+            ]
+        );
 
         Section::updateOrCreate(
             ['code' => '205.00'],
