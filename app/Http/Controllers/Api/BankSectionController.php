@@ -125,6 +125,61 @@ class BankSectionController extends Controller
         return $this->success("Bank section updated successfully.");
     }
 
+    public function bankSections(): AnonymousResourceCollection
+    {
+        return SectionResource::collection(Section::typeBank()->with('bank')->get());
+    }
+
+    public function deposit(Request $request, Section $section): JsonResponse
+    {
+        $request->validate([
+            "voucher_no" => ['nullable', 'string', 'max:100'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'amount' => ['required', 'numeric'],
+            'date' => ['required', 'date'],
+        ]);
+
+        $section->transactions()->create([
+            'type' => 'expense',
+            'voucher_no' => $request->voucher_no,
+            'title' => $request->title,
+            'description' => $request->description,
+            'before_balance' => $section->currentBalance(),
+            'amount' => $request->amount,
+            'after_balance' => $section->currentBalance() + $request->amount,
+            'date' => $request->date,
+        ]);
+
+        return $this->success("Deposit transaction created successfully.", 201);
+    }
+
+    public function withdraw(Request $request, Section $section): JsonResponse
+    {
+        $request->validate([
+            "voucher_no" => ['nullable', 'string', 'max:100'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'amount' => ['required', 'numeric'],
+            'date' => ['required', 'date'],
+        ]);
+
+        if ($section->currentBalance() < $request->amount) return $this->error("Insufficient balance for withdrawal.", 400);
+
+        $section->transactions()->create([
+            'type' => 'income',
+            'voucher_no' => $request->voucher_no,
+            'title' => $request->title,
+            'description' => $request->description,
+            'before_balance' => $section->currentBalance(),
+            'amount' => $request->amount,
+            'after_balance' => $section->currentBalance() - $request->amount,
+            'date' => $request->date,
+        ]);
+
+        return $this->success("Withdraw transaction created successfully.", 201);
+    }
+
     public function transactions(Section $section): AnonymousResourceCollection
     {
         return TransactionResource::collection($section->transactions()->latest()->paginate(10));
