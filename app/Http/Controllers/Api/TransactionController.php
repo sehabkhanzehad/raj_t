@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\TransactionRequest;
 use App\Http\Resources\Api\GroupLeaderResource;
@@ -38,7 +39,7 @@ class TransactionController extends Controller
 
     public function sections(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::with('groupLeader')->orderBy('name')->get());
+        return SectionResource::collection(Section::whereNotIn('type', [SectionType::Bank])->with('groupLeader')->orderBy('name')->get());
     }
 
     public function loans(): AnonymousResourceCollection

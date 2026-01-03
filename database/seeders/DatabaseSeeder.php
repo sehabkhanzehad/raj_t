@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->environment('production')) return;
+
         Year::updateOrCreate([
             'name' => 'Hajj 2026',
         ], [
@@ -27,22 +29,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::updateOrCreate(
-            ['email' => 'rajtravels.bd@gmail.com'],
+            ['email' => 'user@email.com'],
             [
                 'first_name' => 'Raj',
                 'last_name' => 'Travels',
                 'username' => 'rajtravels',
-                'password' => 'raj@0935',
-                'gender' => 'male',
-            ]
-        );
-        User::updateOrCreate(
-            ['email' => 'accounts@msrajtravels.com'],
-            [
-                'first_name' => 'Accounts',
-                'last_name' => '',
-                'username' => 'accounts',
-                'password' => 'raj@accounts',
+                'password' => 'password',
                 'gender' => 'male',
             ]
         );
