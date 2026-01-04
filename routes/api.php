@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('packages', [UmrahController::class, 'packages']);
         Route::get('group-leaders', [UmrahController::class, 'groupLeaders']);
         Route::get('pilgrims', [UmrahController::class, 'pilgrims']);
+        Route::get('passports', [UmrahController::class, 'passports']);
         Route::get('/', [UmrahController::class, 'index']);
         Route::post('/', [UmrahController::class, 'store']);
         Route::put('/{umrah}', [UmrahController::class, 'update']);

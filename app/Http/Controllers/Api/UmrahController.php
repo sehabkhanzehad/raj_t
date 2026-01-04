@@ -74,6 +74,30 @@ class UmrahController extends Controller
         return response()->json(['data' => $pilgrims]);
     }
 
+    public function passports(Request $request): JsonResponse
+    {
+        $request->validate([
+            'pilgrim_id' => ['required', 'exists:pilgrims,id'],
+        ]);
+
+        $passports = Passport::where('pilgrim_id', $request->pilgrim_id)->get();
+
+        $passports = $passports ? $passports->map(function ($passport) {
+            return [
+                'type' => 'passport',
+                'id' => $passport->id,
+                'attributes' => [
+                    'passportNumber' => $passport->passport_number,
+                    'issueDate' => $passport->issue_date,
+                    'expiryDate' => $passport->expiry_date,
+                    'passportType' => $passport->passport_type,
+                ],
+            ];
+        }) : [];
+
+        return response()->json(['data' => $passports]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
