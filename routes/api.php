@@ -116,6 +116,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{umrah}', [UmrahController::class, 'show']);
         // Route::put('/{umrah}', [UmrahController::class, 'update']);
         Route::delete('/{umrah}', [UmrahController::class, 'destroy']);
+
+        Route::post('/{umrah}/passport', [UmrahController::class, 'addPassport']);
+        Route::put('/passport/{passport}', [UmrahController::class, 'updatePassport']);
     });
 
     Route::prefix('umrah-packages')->group(function () {

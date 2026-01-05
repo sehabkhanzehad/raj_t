@@ -29,4 +29,11 @@ class Passport extends Model
 
         return Storage::url($filePath);
     }
+
+    public function deleteFile(): void
+    {
+        if (!$this->file_path) return;
+
+        Storage::delete($this->getRawOriginal('file_path'));
+    }
 }

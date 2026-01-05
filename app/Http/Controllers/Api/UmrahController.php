@@ -18,6 +18,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class UmrahController extends Controller
 {
@@ -97,6 +98,76 @@ class UmrahController extends Controller
         }) : [];
 
         return response()->json(['data' => $passports]);
+    }
+
+    public function addPassport(Request $request, Umrah $umrah): JsonResponse
+    {
+        $validated = $request->validate([
+            'passport_number' => ['required', 'string', 'unique:passports,passport_number'],
+            'issue_date' => ['required', 'date'],
+            'expiry_date' => ['required', 'date', 'after:issue_date'],
+            'passport_type' => ['required', 'in:ordinary,official,diplomatic'],
+            'file' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        // Get pilgrim from umrah
+        $pilgrimId = $umrah->pilgrim_id;
+
+        // handle file upload if exists
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $passportNumber = $validated['passport_number'];
+            $extension = $file->getClientOriginalExtension();
+            $fileName = "$passportNumber.$extension";
+            $filePath = $file->storeAs('passports', $fileName);
+            $validated['file_path'] = $filePath;
+        }
+
+        $passport = Passport::create([
+            'pilgrim_id' => $pilgrimId,
+            'passport_number' => $validated['passport_number'],
+            'issue_date' => $validated['issue_date'],
+            'expiry_date' => $validated['expiry_date'],
+            'passport_type' => $validated['passport_type'],
+            'file_path' => $validated['file_path'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        // Attach passport to umrah
+        $umrah->assignPassport($passport);
+
+        return $this->success("Passport added successfully.");
+    }
+
+    public function updatePassport(Request $request, Passport $passport): JsonResponse
+    {
+        $validated = $request->validate([
+            'passport_number' => ['required', 'string', 'unique:passports,passport_number,' . $passport->id],
+            'issue_date' => ['required', 'date'],
+            'expiry_date' => ['required', 'date', 'after:issue_date'],
+            'passport_type' => ['required', 'in:ordinary,official,diplomatic'],
+            'file' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+
+        if ($request->has('file')) {
+            $passport->deleteFile();
+
+            $passport->file_path = $request->hasFile('file')
+                ? $request->file('file')->storeAs('passports', $validated['passport_number'] . '.' . $request->file('file')->getClientOriginalExtension())
+                : null;
+        }
+
+        $passport->passport_number = $validated['passport_number'];
+        $passport->issue_date = $validated['issue_date'];
+        $passport->expiry_date = $validated['expiry_date'];
+        $passport->passport_type = $validated['passport_type'];
+        $passport->notes = $validated['notes'] ?? null;
+        $passport->save();
+
+        return $this->success("Passport updated successfully.");
     }
 
     public function store(Request $request): JsonResponse
