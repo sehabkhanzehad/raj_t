@@ -176,6 +176,7 @@ class UmrahController extends Controller
             'group_leader_id' => ['required', 'exists:group_leaders,id'],
             'pilgrim_id' => ['nullable', 'exists:pilgrims,id'],
             'new_pilgrim' => ['required_without:pilgrim_id', 'array'],
+            'new_pilgrim.avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'new_pilgrim.first_name' => ['required_with:new_pilgrim', 'string'],
             'new_pilgrim.first_name_bangla' => ['required_with:new_pilgrim', 'string'],
             'new_pilgrim.last_name' => ['nullable', 'string'],
@@ -235,7 +236,23 @@ class UmrahController extends Controller
                 $pilgrimId = $validated['pilgrim_id'];
                 $pilgrim = Pilgrim::find($pilgrimId);
             } else {
+
+                // handle avatar upload if exists
+                if ($request->hasFile('new_pilgrim.avatar')) {
+                    $file = $request->file('new_pilgrim.avatar');
+
+                    $firstName = $validated['new_pilgrim']['first_name'];
+                    $timestamp = time();
+                    $random = uniqid();
+                    $extension = $file->getClientOriginalExtension();
+
+                    $fileName = "{$firstName}_{$timestamp}_{$random}.$extension";
+                    $filePath = $file->storeAs('avatars', $fileName);
+                    $validated['new_pilgrim']['avatar_path'] = $filePath;
+                }
+
                 $user = User::create([
+                    'avatar' => $validated['new_pilgrim']['avatar_path'] ?? null,
                     'first_name' => $validated['new_pilgrim']['first_name'],
                     'last_name' => $validated['new_pilgrim']['last_name'] ?? null,
                     'full_name' => trim($validated['new_pilgrim']['first_name'] . ' ' . ($validated['new_pilgrim']['last_name'] ?? '')),
