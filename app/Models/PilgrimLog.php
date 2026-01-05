@@ -25,7 +25,7 @@ class PilgrimLog extends Model
         return $this->morphTo();
     }
 
-    public static function add(Pilgrim $pilgrim, string $refId, string $refType, PilgrimLogType $type, string $description): void
+    public static function add(Pilgrim $pilgrim, string $refId, string $refType, PilgrimLogType $type, string $description, ?string $statusFrom = null, ?string $statusTo = null): void
     {
         self::create([
             'pilgrim_id'    => $pilgrim->id,
@@ -33,6 +33,8 @@ class PilgrimLog extends Model
             'reference_type' => $refType,
             'type'          => $type,
             'description'   => $description,
+            'status_from'   => $statusFrom,
+            'status_to'     => $statusTo,
         ]);
     }
 }

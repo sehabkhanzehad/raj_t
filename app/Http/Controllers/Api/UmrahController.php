@@ -424,7 +424,9 @@ class UmrahController extends Controller
             $umrah->id,
             Umrah::class,
             PilgrimLogType::UmrahCancelled,
-            "উমরাহ বাতিল করা হয়েছে।"
+            "উমরাহ বাতিল করা হয়েছে।",
+            UmrahStatus::Registered->value,
+            UmrahStatus::Cancelled->value
         );
 
         return $this->success("Umrah marked as canceled successfully.");
@@ -443,7 +445,9 @@ class UmrahController extends Controller
             $umrah->id,
             Umrah::class,
             PilgrimLogType::UmrahCompleted,
-            "উমরাহ সম্পন্ন হয়েছে।"
+            "উমরাহ সম্পন্ন হয়েছে।",
+            UmrahStatus::Registered->value,
+            UmrahStatus::Completed->value
         );
 
         return $this->success("Umrah marked as completed successfully.");
@@ -462,7 +466,9 @@ class UmrahController extends Controller
             $umrah->id,
             Umrah::class,
             PilgrimLogType::UmrahRegistered,
-            "উমরাহর জন্য রেজিস্ট্রেশন (পুনরায়) করা হয়েছে।"
+            "উমরাহর জন্য রেজিস্ট্রেশন (পুনরায়) করা হয়েছে।",
+            UmrahStatus::Cancelled->value,
+            UmrahStatus::Registered->value
         );
 
         return $this->success("Umrah restored to active status successfully.");

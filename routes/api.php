@@ -122,6 +122,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{umrah}/pilgrim/contact-info', [UmrahController::class, 'updatePilgrimContactInfo']);
         Route::post('/{umrah}/pilgrim/avatar', [UmrahController::class, 'updatePilgrimAvatar']);
 
+        // Umrah status routes
+        Route::post('/{umrah}/cancel', [UmrahController::class, 'markAsCanceled']);
+        Route::post('/{umrah}/complete', [UmrahController::class, 'markAsCompleted']);
+        Route::post('/{umrah}/restore', [UmrahController::class, 'restore']);
+
         // Passport routes
         Route::post('/{umrah}/passport', [UmrahController::class, 'addPassport']);
         Route::put('/passport/{passport}', [UmrahController::class, 'updatePassport']);
