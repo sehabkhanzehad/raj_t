@@ -120,6 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Pilgrim update routes
         Route::put('/{umrah}/pilgrim/personal-info', [UmrahController::class, 'updatePilgrimPersonalInfo']);
         Route::put('/{umrah}/pilgrim/contact-info', [UmrahController::class, 'updatePilgrimContactInfo']);
+        Route::put('/{umrah}/pilgrim/addresses', [UmrahController::class, 'updateAddresses']);
         Route::post('/{umrah}/pilgrim/avatar', [UmrahController::class, 'updatePilgrimAvatar']);
 
         // Umrah status routes

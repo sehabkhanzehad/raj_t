@@ -191,6 +191,94 @@ class UmrahController extends Controller
             'new_pilgrim.nid' => ['nullable', 'string', 'unique:users,nid'],
             'new_pilgrim.birth_certificate_number' => ['nullable', 'string', 'unique:users,birth_certificate_number'],
             'new_pilgrim.date_of_birth' => ['nullable', 'date'],
+
+            'new_pilgrim.present_address' => ['required', 'array'],
+            'new_pilgrim.present_address.house_no' => ['nullable', 'string', 'max:255'],
+            'new_pilgrim.present_address.road_no' => ['nullable', 'string', 'max:255'],
+            'new_pilgrim.present_address.village' => ['required', 'string', 'max:255'],
+            'new_pilgrim.present_address.post_office' => ['required', 'string', 'max:255'],
+            'new_pilgrim.present_address.police_station' => ['required', 'string', 'max:255'],
+            'new_pilgrim.present_address.district' => ['required', 'string', 'max:255'],
+            'new_pilgrim.present_address.division' => ['required', 'string', 'max:255'],
+            'new_pilgrim.present_address.postal_code' => ['required', 'string', 'max:20'],
+            'new_pilgrim.present_address.country' => ['nullable', 'string', 'max:255'],
+
+            'same_as_present_address' => ['required', 'boolean'],
+
+            'new_pilgrim.permanent_address' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'array'
+            ],
+            'new_pilgrim.permanent_address.house_no' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.road_no' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.village' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.post_office' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.police_station' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.district' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.division' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'new_pilgrim.permanent_address.postal_code' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:20'
+            ],
+            'new_pilgrim.permanent_address.country' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+
+
             'package_id' => ['required', 'exists:packages,id'],
 
             // Passport validation
@@ -274,6 +362,24 @@ class UmrahController extends Controller
                 $pilgrimId = $pilgrim->id;
             }
 
+            // Save Present Address
+            $user->presentAddress()->create(array_merge(
+                $validated['new_pilgrim']['present_address'],
+                ['type' => 'present']
+            ));
+
+            // Save Permanent Address
+            if ($request->boolean('same_as_present_address')) {
+                $permanentAddressData = $validated['new_pilgrim']['present_address'];
+            } else {
+                $permanentAddressData = $validated['new_pilgrim']['permanent_address'];
+            }
+
+            $user->permanentAddress()->create(array_merge(
+                $permanentAddressData,
+                ['type' => 'permanent']
+            ));
+
             // Handle Passport
             $passport = null;
             if ($request->has('passport_id')) {
@@ -333,9 +439,99 @@ class UmrahController extends Controller
 
     public function show(Umrah $umrah): UmrahResource
     {
-        $umrah->load(['year', 'groupLeader', 'pilgrim.user', 'package', 'passports']);
+        $umrah->load([
+            'year',
+            'groupLeader',
+            'pilgrim.user.presentAddress',
+            'pilgrim.user.permanentAddress',
+            'package',
+            'passports'
+        ]);
         return new UmrahResource($umrah);
     }
+
+    // public function updateAddresses(Request $request, Umrah $umrah): JsonResponse
+    // {
+    //     $validated = $request->validate([
+    //         'present_address' => ['nullable', 'array'],
+    //         'present_address.house_no' => ['nullable', 'string', 'max:255'],
+    //         'present_address.road_no' => ['nullable', 'string', 'max:255'],
+    //         'present_address.village' => ['nullable', 'string', 'max:255'],
+    //         'present_address.post_office' => ['nullable', 'string', 'max:255'],
+    //         'present_address.police_station' => ['nullable', 'string', 'max:255'],
+    //         'present_address.district' => ['nullable', 'string', 'max:255'],
+    //         'present_address.division' => ['nullable', 'string', 'max:255'],
+    //         'present_address.postal_code' => ['nullable', 'string', 'max:20'],
+    //         'present_address.country' => ['nullable', 'string', 'max:255'],
+
+    //         'permanent_address' => ['nullable', 'array'],
+    //         'permanent_address.house_no' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.road_no' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.village' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.post_office' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.police_station' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.district' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.division' => ['nullable', 'string', 'max:255'],
+    //         'permanent_address.postal_code' => ['nullable', 'string', 'max:20'],
+    //         'permanent_address.country' => ['nullable', 'string', 'max:255'],
+
+    //         'same_as_present' => ['nullable', 'boolean'],
+    //     ]);
+
+    //     $user = $umrah->pilgrim->user;
+
+    //     DB::beginTransaction();
+    //     try {
+    //         // Update Present Address
+    //         if (isset($validated['present_address'])) {
+    //             $user->presentAddress()->updateOrCreate(
+    //                 ['type' => 'present'],
+    //                 $validated['present_address']
+    //             );
+    //         }
+
+    //         // Update Permanent Address
+    //         if (isset($validated['permanent_address'])) {
+    //             $user->permanentAddress()->updateOrCreate(
+    //                 ['type' => 'permanent'],
+    //                 $validated['permanent_address']
+    //             );
+    //         }
+
+    //         // Copy present to permanent if requested
+    //         if ($request->boolean('same_as_present')) {
+    //             $presentAddress = $user->presentAddress;
+    //             if ($presentAddress) {
+    //                 $user->permanentAddress()->updateOrCreate(
+    //                     ['type' => 'permanent'],
+    //                     $presentAddress->only([
+    //                         'house_no',
+    //                         'road_no',
+    //                         'village',
+    //                         'post_office',
+    //                         'police_station',
+    //                         'district',
+    //                         'division',
+    //                         'postal_code',
+    //                         'country'
+    //                     ])
+    //                 );
+    //             }
+    //         }
+
+    //         DB::commit();
+
+    //         $umrah->load(['pilgrim.presentAddress', 'pilgrim.permanentAddress']);
+
+    //         return response()->json([
+    //             'message' => 'Addresses updated successfully',
+    //             'umrah' => $umrah,
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return $this->error("Failed to update addresses: " . $e->getMessage());
+    //     }
+    // }
 
     public function updatePilgrimPersonalInfo(Request $request, Umrah $umrah): JsonResponse
     {
