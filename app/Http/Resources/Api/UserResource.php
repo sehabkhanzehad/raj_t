@@ -41,6 +41,10 @@ class UserResource extends JsonResource
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],
+            'relationships' => [
+                'presentAddress' => new AddressResource($this->whenLoaded('presentAddress')),
+                'permanentAddress' => new AddressResource($this->whenLoaded('permanentAddress')),
+            ],
         ];
     }
 }

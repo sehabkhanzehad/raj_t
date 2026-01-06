@@ -23,7 +23,14 @@ class UmrahController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return UmrahResource::collection(Umrah::with(['year', 'groupLeader', 'pilgrim.user', 'package', 'passports'])->paginate(request()->get('per_page', 10)));
+        return UmrahResource::collection(Umrah::with([
+            'year',
+            'groupLeader',
+            'pilgrim.user.presentAddress',
+            'pilgrim.user.permanentAddress',
+            'package',
+            'passports'
+        ])->paginate(request()->get('per_page', 10)));
     }
 
     public function packages(): JsonResponse
@@ -450,88 +457,129 @@ class UmrahController extends Controller
         return new UmrahResource($umrah);
     }
 
-    // public function updateAddresses(Request $request, Umrah $umrah): JsonResponse
-    // {
-    //     $validated = $request->validate([
-    //         'present_address' => ['nullable', 'array'],
-    //         'present_address.house_no' => ['nullable', 'string', 'max:255'],
-    //         'present_address.road_no' => ['nullable', 'string', 'max:255'],
-    //         'present_address.village' => ['nullable', 'string', 'max:255'],
-    //         'present_address.post_office' => ['nullable', 'string', 'max:255'],
-    //         'present_address.police_station' => ['nullable', 'string', 'max:255'],
-    //         'present_address.district' => ['nullable', 'string', 'max:255'],
-    //         'present_address.division' => ['nullable', 'string', 'max:255'],
-    //         'present_address.postal_code' => ['nullable', 'string', 'max:20'],
-    //         'present_address.country' => ['nullable', 'string', 'max:255'],
+    public function updateAddresses(Request $request, Umrah $umrah): JsonResponse
+    {
+        $validated = $request->validate([
+            'present_address' => ['required', 'array'],
+            'present_address.house_no' => ['nullable', 'string', 'max:255'],
+            'present_address.road_no' => ['nullable', 'string', 'max:255'],
+            'present_address.village' => ['required', 'string', 'max:255'],
+            'present_address.post_office' => ['required', 'string', 'max:255'],
+            'present_address.police_station' => ['required', 'string', 'max:255'],
+            'present_address.district' => ['required', 'string', 'max:255'],
+            'present_address.division' => ['required', 'string', 'max:255'],
+            'present_address.postal_code' => ['required', 'string', 'max:20'],
+            'present_address.country' => ['nullable', 'string', 'max:255'],
 
-    //         'permanent_address' => ['nullable', 'array'],
-    //         'permanent_address.house_no' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.road_no' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.village' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.post_office' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.police_station' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.district' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.division' => ['nullable', 'string', 'max:255'],
-    //         'permanent_address.postal_code' => ['nullable', 'string', 'max:20'],
-    //         'permanent_address.country' => ['nullable', 'string', 'max:255'],
+            'same_as_present_address' => ['required', 'boolean'],
 
-    //         'same_as_present' => ['nullable', 'boolean'],
-    //     ]);
+            'permanent_address' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'array'
+            ],
+            'permanent_address.house_no' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'permanent_address.road_no' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'permanent_address.village' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.post_office' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.police_station' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.district' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.division' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.postal_code' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:20'
+            ],
+            'permanent_address.country' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+        ]);
 
-    //     $user = $umrah->pilgrim->user;
+        $user = $umrah->pilgrim->user;
 
-    //     DB::beginTransaction();
-    //     try {
-    //         // Update Present Address
-    //         if (isset($validated['present_address'])) {
-    //             $user->presentAddress()->updateOrCreate(
-    //                 ['type' => 'present'],
-    //                 $validated['present_address']
-    //             );
-    //         }
+        DB::beginTransaction();
+        try {
+            // Update Present Address
+            $user->presentAddress()->updateOrCreate(
+                ['addressable_id' => $user->id, 'addressable_type' => User::class, 'type' => 'present'],
+                array_merge($validated['present_address'], ['type' => 'present'])
+            );
 
-    //         // Update Permanent Address
-    //         if (isset($validated['permanent_address'])) {
-    //             $user->permanentAddress()->updateOrCreate(
-    //                 ['type' => 'permanent'],
-    //                 $validated['permanent_address']
-    //             );
-    //         }
+            // Update Permanent Address
+            if ($request->boolean('same_as_present_address')) {
+                // Copy present to permanent
+                $user->permanentAddress()->updateOrCreate(
+                    ['addressable_id' => $user->id, 'addressable_type' => User::class, 'type' => 'permanent'],
+                    array_merge($validated['present_address'], ['type' => 'permanent'])
+                );
+            } else {
+                // Use provided permanent address
+                $user->permanentAddress()->updateOrCreate(
+                    ['addressable_id' => $user->id, 'addressable_type' => User::class, 'type' => 'permanent'],
+                    array_merge($validated['permanent_address'], ['type' => 'permanent'])
+                );
+            }
 
-    //         // Copy present to permanent if requested
-    //         if ($request->boolean('same_as_present')) {
-    //             $presentAddress = $user->presentAddress;
-    //             if ($presentAddress) {
-    //                 $user->permanentAddress()->updateOrCreate(
-    //                     ['type' => 'permanent'],
-    //                     $presentAddress->only([
-    //                         'house_no',
-    //                         'road_no',
-    //                         'village',
-    //                         'post_office',
-    //                         'police_station',
-    //                         'district',
-    //                         'division',
-    //                         'postal_code',
-    //                         'country'
-    //                     ])
-    //                 );
-    //             }
-    //         }
+            DB::commit();
 
-    //         DB::commit();
-
-    //         $umrah->load(['pilgrim.presentAddress', 'pilgrim.permanentAddress']);
-
-    //         return response()->json([
-    //             'message' => 'Addresses updated successfully',
-    //             'umrah' => $umrah,
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return $this->error("Failed to update addresses: " . $e->getMessage());
-    //     }
-    // }
+            return $this->success("Addresses updated successfully.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error("Failed to update addresses: " . $e->getMessage());
+        }
+    }
 
     public function updatePilgrimPersonalInfo(Request $request, Umrah $umrah): JsonResponse
     {
