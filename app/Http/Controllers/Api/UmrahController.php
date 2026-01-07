@@ -24,13 +24,13 @@ class UmrahController extends Controller
     public function index(): AnonymousResourceCollection
     {
         return UmrahResource::collection(Umrah::with([
-            'year',
+            // 'year',
             'groupLeader',
             'pilgrim.user.presentAddress',
             'pilgrim.user.permanentAddress',
             'package',
             'passports'
-        ])->paginate(request()->get('per_page', 10)));
+        ])->latest()->paginate(request()->get('per_page', 10)));
     }
 
     public function packages(): JsonResponse
