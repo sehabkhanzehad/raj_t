@@ -139,6 +139,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{package}', [UmrahPackageController::class, 'update']);
         Route::delete('/{package}', [UmrahPackageController::class, 'destroy']);
         Route::get('/{package}/pilgrims', [UmrahPackageController::class, 'pilgrims']);
+
+        Route::get('/{package}/pilgrims-for-collection', [UmrahPackageController::class, 'pilgrimsForCollection']);
+        Route::post('/{package}/pilgrims/collection', [UmrahPackageController::class, 'collection']);
     });
 
     Route::prefix('sections')->group(function () {

@@ -6,6 +6,7 @@ use App\Enums\PackageType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PackageResource;
 use App\Models\Package;
+use App\Models\Umrah;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -84,5 +85,52 @@ class UmrahPackageController extends Controller
         ])->latest()->paginate($perPage);
 
         return \App\Http\Resources\Api\UmrahResource::collection($umrahs);
+    }
+
+    public function pilgrimsForCollection(Package $package): AnonymousResourceCollection
+    {
+        $umrahs = $package->umrahs()
+            ->whereHas('groupLeader', fn($q) => $q->where('pilgrim_required', true))
+            ->with(['pilgrim.user'])
+            ->latest()
+            ->get();
+
+        return \App\Http\Resources\Api\UmrahResource::collection($umrahs);
+    }
+
+    public function collection(Request $request, Package $package): JsonResponse
+    {
+        $request->validate([
+            'umrah_id' => ['required', 'exists:umrahs,id'],
+            'voucher_no' => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:400'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'date' => ['required', 'date'],
+        ]);
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $package) {
+            $umrahPilrim = $package->umrahs()->where('id', $request->umrah_id)->first();
+            $groupLeader = $umrahPilrim->groupLeader;
+            $section = $groupLeader->section;
+
+            $transaction = $section->transactions()->create([
+                'type' => 'income',
+                'voucher_no' => $request->voucher_no,
+                'title' => $request->title,
+                'description' => $request->description,
+                'before_balance' => $section->currentBalance(),
+                'amount' => $request->amount,
+                'after_balance' => $section->currentBalance() + $request->amount,
+                'date' => $request->date,
+            ]);
+
+            $transaction->references()->create([
+                'referenceable_type' => Umrah::class,
+                'referenceable_id' => $umrahPilrim->id,
+            ]);
+        });
+
+        return $this->success('Collection recorded successfully', 201);
     }
 }

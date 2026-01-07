@@ -735,6 +735,4 @@ class UmrahController extends Controller
 
         // return $this->success("Umrah deleted successfully.");
     }
-
-    // public function colloection()
 }
