@@ -29,6 +29,8 @@ class UserResource extends JsonResource
                 'motherNameBangla' => $this->mother_name_bangla,
                 'fatherName' => $this->father_name,
                 'fatherNameBangla' => $this->father_name_bangla,
+                'occupation' => $this->occupation,
+                'spouseName' => $this->spouse_name,
                 'avatar' => $this->avatar ?? null,
                 'email' => $this->email,
                 'phone' => $this->phone,
