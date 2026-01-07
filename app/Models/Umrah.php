@@ -6,6 +6,8 @@ use App\Enums\UmrahStatus;
 use App\Models\Traits\HasPassport;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Transaction;
 
 class Umrah extends Model
 {
@@ -37,10 +39,44 @@ class Umrah extends Model
         return $this->belongsTo(Package::class);
     }
 
-    protected static function booted()
+    public function references(): MorphMany
+    {
+        return $this->morphMany(Reference::class, 'referenceable');
+    }
+
+    protected static function booted(): void
     {
         static::creating(function (Umrah $model) {
             $model->year_id = Year::getCurrentYear()?->id;
         });
+    }
+
+    public function totalCollect(): float
+    {
+        return Transaction::whereHas('references', function ($query) {
+            $query->where('referenceable_id', $this->id)
+                  ->where('referenceable_type', self::class);
+        })->where('type', 'income')->sum('amount');
+    }
+
+    public function totalRefund(): float
+    {
+        return Transaction::whereHas('references', function ($query) {
+            $query->where('referenceable_id', $this->id)
+                  ->where('referenceable_type', self::class);
+        })->where('type', 'expense')->sum('amount');
+    }
+
+    public function dueAmount(): float
+    {
+        $totalPaid = $this->totalCollect() - $this->totalRefund();
+        $due = $this->package->price - ($totalPaid + $this->discount);
+        return max($due, 0);
+    }
+
+    public function totalPaid(): float
+    {
+        $totalPaid = $this->totalCollect() - $this->totalRefund();
+        return $totalPaid;
     }
 }

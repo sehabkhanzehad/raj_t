@@ -15,6 +15,11 @@ class UmrahResource extends JsonResource
             'id' => $this->id,
             'attributes' => [
                 'status' => $this->status,
+                'discount' => $this->discount,
+                'totalCollect' => $this->totalCollect(),
+                'totalRefund' => $this->totalRefund(),
+                'totalPaid' => $this->totalPaid(),
+                'dueAmount' => $this->dueAmount(),
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],

@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Enums\PilgrimLogType;
 use App\Enums\UmrahStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\TransactionResource;
 use App\Http\Resources\Api\UmrahResource;
 use App\Models\GroupLeader;
 use App\Models\Package;
 use App\Models\Passport;
 use App\Models\Pilgrim;
 use App\Models\PilgrimLog;
+use App\Models\Transaction;
 use App\Models\Umrah;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -661,6 +663,22 @@ class UmrahController extends Controller
         return $this->success("Avatar updated successfully.");
     }
 
+    public function applyDiscount(Request $request, Umrah $umrah): JsonResponse
+    {
+        $validated = $request->validate([
+            'discount' => ['required', 'numeric', 'min:0', 'max:' . $umrah->package->price],
+        ]);
+
+        if ($umrah->status !== UmrahStatus::Registered) {
+            return $this->error("Discount can only be applied to registered Umrah.");
+        }
+
+        $umrah->discount = $validated['discount'];
+        $umrah->save();
+
+        return $this->success("Discount applied successfully.");
+    }
+
     public function markAsCanceled(Umrah $umrah): JsonResponse
     {
         if ($umrah->status === UmrahStatus::Cancelled) return $this->error("Umrah is already canceled.");
@@ -734,5 +752,14 @@ class UmrahController extends Controller
         // deltete user if no other records
 
         // return $this->success("Umrah deleted successfully.");
+    }
+
+    public function transactions(Umrah $umrah): AnonymousResourceCollection
+    {
+        $transactions = Transaction::whereHas('references', fn($query) => $query->where('referenceable_id', $umrah->id)->where('referenceable_type', Umrah::class))
+            ->latest()
+            ->paginate(request()->get('per_page', 10));
+
+        return TransactionResource::collection($transactions);
     }
 }
