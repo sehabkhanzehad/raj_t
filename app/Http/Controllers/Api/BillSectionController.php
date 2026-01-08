@@ -24,8 +24,8 @@ class BillSectionController extends Controller
             'code' => ['required', 'string', 'max:50', 'unique:sections,code'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'number' => ['required', 'string', 'max:100', 'unique:bills,number'],
-            'biller_name' => ['required', 'string', 'max:255'],
+            'number' => ['nullable', 'string', 'max:100', 'unique:bills,number'],
+            'biller_name' => ['nullable', 'string', 'max:255'],
         ]);
 
         $section = Section::create([
@@ -54,8 +54,8 @@ class BillSectionController extends Controller
             'code' => ['required', 'string', 'max:50', Rule::unique('sections', 'code')->ignore($section->id)],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'number' => ['required', 'string', 'max:100', Rule::unique('bills', 'number')->ignore($section->bill->id)],
-            'biller_name' => ['required', 'string', 'max:255'],
+            'number' => ['nullable', 'string', 'max:100', Rule::unique('bills', 'number')->ignore($section->bill->id)],
+            'biller_name' => ['nullable', 'string', 'max:255'],
         ]);
 
         $section->update([
