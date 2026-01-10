@@ -238,6 +238,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{preRegistration}/pilgrim/contact-info', [PreRegistrationController::class, 'updatePilgrimContactInfo']);
         Route::put('/{preRegistration}/pilgrim/addresses', [PreRegistrationController::class, 'updateAddresses']);
         Route::post('/{preRegistration}/pilgrim/avatar', [PreRegistrationController::class, 'updatePilgrimAvatar']);
+        Route::put('/{preRegistration}/pilgrim/update-pre-registration', [PreRegistrationController::class, 'updatePreRegDetails']);
 
         // Passport routes
         Route::post('/{preRegistration}/passport', [PreRegistrationController::class, 'addPassport']);

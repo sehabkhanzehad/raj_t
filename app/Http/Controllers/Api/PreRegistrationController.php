@@ -416,7 +416,8 @@ class PreRegistrationController extends Controller
             'groupLeader',
             'pilgrim.user.presentAddress',
             'pilgrim.user.permanentAddress',
-            'passports'
+            'passports',
+            'bank'
         ]);
 
         return new PreRegistrationResource($preRegistration);
@@ -744,6 +745,22 @@ class PreRegistrationController extends Controller
         $user->save();
 
         return $this->success("Avatar updated successfully.");
+    }
+
+    public function updatePreRegDetails(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $validated = $request->validate([
+            'bank_id' => ['required', 'integer', 'exists:banks,id'],
+            'serial_no' => ['required', 'string', 'max:100'],
+            'tracking_no' => ['required', 'string', 'max:100'],
+            'bank_voucher_no' => ['required', 'string', 'max:100'],
+            'voucher_name' => ['required', 'string', 'max:255'],
+            'date' => ['required', 'date'],
+        ]);
+
+        $preRegistration->update($validated);
+
+        return $this->success("Pre-registration details updated successfully.");
     }
 
     public function transactions(PreRegistration $preRegistration): AnonymousResourceCollection
