@@ -452,7 +452,6 @@ class UmrahController extends Controller
     public function show(Umrah $umrah): UmrahResource
     {
         $umrah->load([
-            'year',
             'groupLeader',
             'pilgrim.user.presentAddress',
             'pilgrim.user.permanentAddress',

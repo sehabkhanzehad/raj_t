@@ -232,5 +232,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{preRegistration}', [PreRegistrationController::class, 'show']);
         Route::put('/{preRegistration}', [PreRegistrationController::class, 'update']);
         Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
+
+        // Pilgrim update routes
+        Route::put('/{preRegistration}/pilgrim/personal-info', [PreRegistrationController::class, 'updatePilgrimPersonalInfo']);
+        Route::put('/{preRegistration}/pilgrim/contact-info', [PreRegistrationController::class, 'updatePilgrimContactInfo']);
+        Route::put('/{preRegistration}/pilgrim/addresses', [PreRegistrationController::class, 'updateAddresses']);
+        Route::post('/{preRegistration}/pilgrim/avatar', [PreRegistrationController::class, 'updatePilgrimAvatar']);
+
+        // Passport routes
+        Route::post('/{preRegistration}/passport', [PreRegistrationController::class, 'addPassport']);
+        Route::put('/passport/{passport}', [PreRegistrationController::class, 'updatePassport']);
+
+        Route::get('/{preRegistration}/transactions', [PreRegistrationController::class, 'transactions']);
     });
 });

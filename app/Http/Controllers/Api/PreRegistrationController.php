@@ -6,12 +6,14 @@ use App\Enums\PilgrimLogType;
 use App\Enums\PreRegistrationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\PreRegistrationResource;
+use App\Http\Resources\Api\TransactionResource;
 use App\Models\Bank;
 use App\Models\GroupLeader;
 use App\Models\Passport;
 use App\Models\Pilgrim;
 use App\Models\PilgrimLog;
 use App\Models\PreRegistration;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +31,7 @@ class PreRegistrationController extends Controller
                 'pilgrim.user.presentAddress',
                 'pilgrim.user.permanentAddress',
                 'groupLeader',
-                'bank'
+                'passports'
             ]
         )->latest()->paginate($request->get('per_page', 10)));
     }
@@ -408,6 +410,18 @@ class PreRegistrationController extends Controller
         }
     }
 
+    public function show(PreRegistration $preRegistration): PreRegistrationResource
+    {
+        $preRegistration->load([
+            'groupLeader',
+            'pilgrim.user.presentAddress',
+            'pilgrim.user.permanentAddress',
+            'passports'
+        ]);
+
+        return new PreRegistrationResource($preRegistration);
+    }
+
     public function update(Request $request, PreRegistration $preRegistration): JsonResponse
     {
         $request->validate([
@@ -460,5 +474,284 @@ class PreRegistrationController extends Controller
     {
         $preRegistration->delete();
         return $this->success("Pre-registration deleted successfully.");
+    }
+
+    public function addPassport(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $validated = $request->validate([
+            'passport_number' => ['required', 'string', 'unique:passports,passport_number'],
+            'issue_date' => ['required', 'date'],
+            'expiry_date' => ['required', 'date', 'after:issue_date'],
+            'passport_type' => ['required', 'in:ordinary,official,diplomatic'],
+            'file' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        // Get pilgrim from pre-registration
+        $pilgrimId = $preRegistration->pilgrim_id;
+
+        // handle file upload if exists
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $passportNumber = $validated['passport_number'];
+            $extension = $file->getClientOriginalExtension();
+            $fileName = "$passportNumber.$extension";
+            $filePath = $file->storeAs('passports', $fileName);
+            $validated['file_path'] = $filePath;
+        }
+
+        $passport = Passport::create([
+            'pilgrim_id' => $pilgrimId,
+            'passport_number' => $validated['passport_number'],
+            'issue_date' => $validated['issue_date'],
+            'expiry_date' => $validated['expiry_date'],
+            'passport_type' => $validated['passport_type'],
+            'file_path' => $validated['file_path'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        // Attach passport to pre-registration
+        $preRegistration->assignPassport($passport);
+
+        return $this->success("Passport added successfully.");
+    }
+
+    public function updatePassport(Request $request, Passport $passport): JsonResponse
+    {
+        $validated = $request->validate([
+            'passport_number' => ['required', 'string', 'unique:passports,passport_number,' . $passport->id],
+            'issue_date' => ['required', 'date'],
+            'expiry_date' => ['required', 'date', 'after:issue_date'],
+            'passport_type' => ['required', 'in:ordinary,official,diplomatic'],
+            'file' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        if ($request->has('file')) {
+            $passport->deleteFile();
+
+            $passport->file_path = $request->hasFile('file')
+                ? $request->file('file')->storeAs('passports', $validated['passport_number'] . '.' . $request->file('file')->getClientOriginalExtension())
+                : null;
+        }
+
+        $passport->passport_number = $validated['passport_number'];
+        $passport->issue_date = $validated['issue_date'];
+        $passport->expiry_date = $validated['expiry_date'];
+        $passport->passport_type = $validated['passport_type'];
+        $passport->notes = $validated['notes'] ?? null;
+        $passport->save();
+
+        return $this->success("Passport updated successfully.");
+    }
+
+    public function updateAddresses(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $validated = $request->validate([
+            'present_address' => ['required', 'array'],
+            'present_address.house_no' => ['nullable', 'string', 'max:255'],
+            'present_address.road_no' => ['nullable', 'string', 'max:255'],
+            'present_address.village' => ['required', 'string', 'max:255'],
+            'present_address.post_office' => ['required', 'string', 'max:255'],
+            'present_address.police_station' => ['required', 'string', 'max:255'],
+            'present_address.district' => ['required', 'string', 'max:255'],
+            'present_address.division' => ['required', 'string', 'max:255'],
+            'present_address.postal_code' => ['required', 'string', 'max:20'],
+            'present_address.country' => ['nullable', 'string', 'max:255'],
+
+            'same_as_present_address' => ['required', 'boolean'],
+
+            'permanent_address' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'array'
+            ],
+            'permanent_address.house_no' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'permanent_address.road_no' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+            'permanent_address.village' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.post_office' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.police_station' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.district' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.division' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:255'
+            ],
+            'permanent_address.postal_code' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'string',
+                'max:20'
+            ],
+            'permanent_address.country' => [
+                Rule::requiredIf(function () use ($request) {
+                    return !$request->boolean('same_as_present_address');
+                }),
+                'nullable',
+                'string',
+                'max:255'
+            ],
+        ]);
+
+        $user = $preRegistration->pilgrim->user;
+
+        DB::beginTransaction();
+        try {
+            // Update Present Address
+            $user->presentAddress()->updateOrCreate(
+                ['addressable_id' => $user->id, 'addressable_type' => User::class, 'type' => 'present'],
+                array_merge($validated['present_address'], ['type' => 'present'])
+            );
+
+            // Update Permanent Address
+            if ($request->boolean('same_as_present_address')) {
+                // Copy present to permanent
+                $user->permanentAddress()->updateOrCreate(
+                    ['addressable_id' => $user->id, 'addressable_type' => User::class, 'type' => 'permanent'],
+                    array_merge($validated['present_address'], ['type' => 'permanent'])
+                );
+            } else {
+                // Use provided permanent address
+                $user->permanentAddress()->updateOrCreate(
+                    ['addressable_id' => $user->id, 'addressable_type' => User::class, 'type' => 'permanent'],
+                    array_merge($validated['permanent_address'], ['type' => 'permanent'])
+                );
+            }
+
+            DB::commit();
+
+            return $this->success("Addresses updated successfully.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error("Failed to update addresses: " . $e->getMessage());
+        }
+    }
+
+    public function updatePilgrimPersonalInfo(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $validated = $request->validate([
+            'first_name' => ['required', 'string'],
+            'first_name_bangla' => ['required', 'string'],
+            'last_name' => ['nullable', 'string'],
+            'last_name_bangla' => ['nullable', 'string'],
+            'father_name' => ['nullable', 'string'],
+            'father_name_bangla' => ['nullable', 'string'],
+            'mother_name' => ['nullable', 'string'],
+            'mother_name_bangla' => ['nullable', 'string'],
+            'occupation' => ['nullable', 'string'],
+            'spouse_name' => ['nullable', 'string'],
+        ]);
+
+        $user = $preRegistration->pilgrim->user;
+        $user->update([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'] ?? null,
+            'full_name' => trim($validated['first_name'] . ' ' . ($validated['last_name'] ?? '')),
+            'first_name_bangla' => $validated['first_name_bangla'],
+            'last_name_bangla' => $validated['last_name_bangla'] ?? null,
+            'full_name_bangla' => trim($validated['first_name_bangla'] . ' ' . ($validated['last_name_bangla'] ?? '')),
+            'father_name' => $validated['father_name'] ?? null,
+            'father_name_bangla' => $validated['father_name_bangla'] ?? null,
+            'mother_name' => $validated['mother_name'] ?? null,
+            'mother_name_bangla' => $validated['mother_name_bangla'] ?? null,
+            'occupation' => $validated['occupation'] ?? null,
+            'spouse_name' => $validated['spouse_name'] ?? null,
+        ]);
+
+        return $this->success("Personal information updated successfully.");
+    }
+
+    public function updatePilgrimContactInfo(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $user = $preRegistration->pilgrim->user;
+
+        $validated = $request->validate([
+            'email' => ['nullable', 'email', "unique:users,email,{$user->id}"],
+            'phone' => ['nullable', 'string'],
+            'gender' => ['required', 'in:male,female,other'],
+            'is_married' => ['required', 'boolean'],
+            'nid' => ['nullable', 'string', "unique:users,nid,{$user->id}"],
+            'birth_certificate_number' => ['nullable', 'string', "unique:users,birth_certificate_number,{$user->id}"],
+            'date_of_birth' => ['nullable', 'date'],
+        ]);
+
+        $user->update($validated);
+
+        return $this->success("Contact & identification updated successfully.");
+    }
+
+    public function updatePilgrimAvatar(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $request->validate([
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+        ]);
+
+        $user = $preRegistration->pilgrim->user;
+
+        if ($request->has('avatar')) {
+            $user->deleteAvatar();
+
+            $user->avatar = $request->hasFile('avatar')
+                ? $request->file('avatar')->storeAs(
+                    'avatars',
+                    $user->first_name . '_' . time() . '_' . uniqid() . '.' . $request->file('avatar')->getClientOriginalExtension()
+                )
+                : null;
+        }
+
+        $user->save();
+
+        return $this->success("Avatar updated successfully.");
+    }
+
+    public function transactions(PreRegistration $preRegistration): AnonymousResourceCollection
+    {
+        $transactions = Transaction::whereHas('references', fn($query) => $query->where('referenceable_id', $preRegistration->id)->where('referenceable_type', PreRegistration::class))
+            ->latest()
+            ->paginate(request()->get('per_page', 10));
+
+        return TransactionResource::collection($transactions);
     }
 }
