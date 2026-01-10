@@ -79,16 +79,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{groupLeader}', [GroupLeaderController::class, 'destroy']);
     });
 
-    Route::get('pre-registrations/group-leaders', [PreRegistrationController::class, 'groupLeaders']);
-    Route::get('pre-registrations/banks', [PreRegistrationController::class, 'banks']);
-
-    Route::prefix('pre-registrations')->group(function () {
-        Route::get('/', [PreRegistrationController::class, 'index']);
-        Route::post('/', [PreRegistrationController::class, 'store']);
-        Route::put('/{preRegistration}', [PreRegistrationController::class, 'update']);
-        Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
-    });
-
     Route::prefix('registrations')->group(function () {
         Route::get('banks', [RegistrationController::class, 'banks']);
         Route::get('pre-registrations', [RegistrationController::class, 'preRegistrations']);
@@ -230,5 +220,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [YearController::class, 'index']);
         Route::post('/', [YearController::class, 'store']);
         Route::put('/{year}', [YearController::class, 'update']);
+    });
+
+    Route::prefix('pre-registrations')->group(function () {
+        Route::get('group-leaders', [PreRegistrationController::class, 'groupLeaders']);
+        Route::get('banks', [PreRegistrationController::class, 'banks']);
+        Route::get('pilgrims', [PreRegistrationController::class, 'pilgrims']);
+        Route::get('passports', [PreRegistrationController::class, 'passports']);
+        Route::get('/', [PreRegistrationController::class, 'index']);
+        Route::post('/', [PreRegistrationController::class, 'store']);
+        Route::get('/{preRegistration}', [PreRegistrationController::class, 'show']);
+        Route::put('/{preRegistration}', [PreRegistrationController::class, 'update']);
+        Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
     });
 });

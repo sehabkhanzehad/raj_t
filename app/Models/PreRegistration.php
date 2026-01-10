@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\PreRegistrationStatus;
+use App\Models\Traits\HasPassport;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PreRegistration extends Model
 {
+    use HasPassport;
+
     protected $guarded = ['id'];
 
     protected $casts = [

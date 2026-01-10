@@ -198,7 +198,7 @@ class UmrahController extends Controller
             'new_pilgrim.phone' => ['nullable', 'string'],
             'new_pilgrim.gender' => ['required_with:new_pilgrim', 'in:male,female,other'],
             'new_pilgrim.is_married' => ['required_with:new_pilgrim', 'boolean'],
-            'new_pilgrim.nid' => ['nullable', 'string', 'unique:users,nid'],
+            'new_pilgrim.nid' => ['required_with:new_pilgrim', 'string', 'unique:users,nid'],
             'new_pilgrim.birth_certificate_number' => ['nullable', 'string', 'unique:users,birth_certificate_number'],
             'new_pilgrim.date_of_birth' => ['nullable', 'date'],
 
