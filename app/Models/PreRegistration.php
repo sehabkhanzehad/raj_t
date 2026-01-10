@@ -21,11 +21,6 @@ class PreRegistration extends Model
     ];
 
     // Relationships
-    public function bank(): BelongsTo
-    {
-        return $this->belongsTo(Bank::class);
-    }
-
     public function groupLeader(): BelongsTo
     {
         return $this->belongsTo(GroupLeader::class);

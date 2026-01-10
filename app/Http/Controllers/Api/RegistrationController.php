@@ -44,18 +44,15 @@ class  RegistrationController extends Controller
 
     public function preRegistrations(): JsonResponse
     {
-        $preRegistrations = PreRegistration::active()->with('pilgrim.user', 'groupLeader')->get()->map(function ($preRegistration) {
+        $preRegistrations = PreRegistration::active()->with('pilgrim.user')->get()->map(function ($preRegistration) {
             return [
                 "type" => "pre-registration",
                 "id" => $preRegistration->id,
                 "attributes" => [
                     "serialNo" => $preRegistration->serial_no,
-                    "bankVoucherNo" => $preRegistration->bank_voucher_no,
-                    "date" => $preRegistration->date,
                 ],
                 "relationships" => [
                     "pilgrim" => new PilgrimResource($preRegistration->relationLoaded('pilgrim') ? $preRegistration->pilgrim : null),
-                    "groupLeader" => new GroupLeaderResource($preRegistration->relationLoaded('groupLeader') ? $preRegistration->groupLeader : null),
                 ],
             ];
         });

@@ -23,11 +23,6 @@ class Bank extends Model
         return $this->belongsTo(Section::class);
     }
 
-    public function preRegistrations(): HasMany
-    {
-        return $this->hasMany(PreRegistration::class);
-    }
-
     public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class);

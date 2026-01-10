@@ -224,13 +224,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('pre-registrations')->group(function () {
         Route::get('group-leaders', [PreRegistrationController::class, 'groupLeaders']);
-        Route::get('banks', [PreRegistrationController::class, 'banks']);
         Route::get('pilgrims', [PreRegistrationController::class, 'pilgrims']);
         Route::get('passports', [PreRegistrationController::class, 'passports']);
         Route::get('/', [PreRegistrationController::class, 'index']);
         Route::post('/', [PreRegistrationController::class, 'store']);
         Route::get('/{preRegistration}', [PreRegistrationController::class, 'show']);
-        Route::put('/{preRegistration}', [PreRegistrationController::class, 'update']);
         Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
 
         // Pilgrim update routes

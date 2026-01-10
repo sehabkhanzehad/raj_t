@@ -51,22 +51,6 @@ class PreRegistrationController extends Controller
         return response()->json(['data' => $groupLeaders]);
     }
 
-    public function banks(): JsonResponse
-    {
-        $banks = Bank::all()->map(function ($bank) {
-            return [
-                "type" => "bank",
-                "id" => $bank->id,
-                "attributes" => [
-                    "name" => $bank->name,
-                    "accountNumber" => $bank->account_number,
-                ],
-            ];
-        });
-
-        return response()->json(['data' => $banks]);
-    }
-
     public function pilgrims(): JsonResponse
     {
         $pilgrims = User::whereHas('pilgrim')->get()->map(function ($user) {
@@ -115,7 +99,6 @@ class PreRegistrationController extends Controller
         $validated = $request->validate([
             "group_leader_id" => ["required", "integer", "exists:group_leaders,id"],
             'status' => ['required', Rule::in(['active', 'pending'])],
-            "bank_id" => ['required_if:status,active', "integer", "exists:banks,id"],
             'serial_no' => ['required_if:status,active', 'string', 'max:100'],
             'tracking_no' => ['required_if:status,active', 'string', 'max:100'],
             'bank_voucher_no' => ['required_if:status,active', 'string', 'max:100'],
@@ -381,7 +364,6 @@ class PreRegistrationController extends Controller
 
             $preReg = $pilgrim->preRegistrations()->create([
                 'group_leader_id' => $validated['group_leader_id'],
-                'bank_id' => $validated['bank_id'] ?? null,
                 'serial_no' => $validated['serial_no'] ?? null,
                 'bank_voucher_no' => $validated['bank_voucher_no'] ?? null,
                 'tracking_no' => $validated['tracking_no'] ?? null,
@@ -417,62 +399,14 @@ class PreRegistrationController extends Controller
             'pilgrim.user.presentAddress',
             'pilgrim.user.permanentAddress',
             'passports',
-            'bank'
         ]);
 
         return new PreRegistrationResource($preRegistration);
     }
 
-    public function update(Request $request, PreRegistration $preRegistration): JsonResponse
-    {
-        $request->validate([
-            "group_leader_id" => ["required", "integer", "exists:group_leaders,id"],
-            "bank_id" => ["required", "integer", "exists:banks,id"],
-            "first_name" => ["required", "string", "max:255"],
-            "last_name" => ["nullable", "string", "max:255"],
-            "mother_name" => ["nullable", "string", "max:255"],
-            "father_name" => ["nullable", "string", "max:255"],
-            "email" => ["nullable", "string", "email", "max:255", "unique:users,email," . $preRegistration->pilgrim->user->id],
-            "phone" => ["nullable", "string", "max:20"],
-            "gender" => ["required", "in:male,female,other"],
-            "is_married" => ["required", "boolean"],
-            'date_of_birth' => ['nullable', 'date'],
-            'nid' => ['required', 'string', 'max:100', 'unique:users,nid,' . $preRegistration->pilgrim->user->id],
-            'status' => ['required', Rule::in(PreRegistrationStatus::values())],
-            'serial_no' => ['nullable', 'string', 'max:100'],
-            'bank_voucher_no' => ['nullable', 'string', 'max:100'],
-            'date' => ['nullable', 'date'],
-        ]);
-
-        $user = $preRegistration->pilgrim->user;
-
-        $user->update([
-            "first_name" => $request->first_name,
-            "last_name" => $request->last_name ?? null,
-            "mother_name" => $request->mother_name ?? null,
-            "father_name" => $request->father_name ?? null,
-            "email" => $request->email ?? null,
-            "phone" => $request->phone ?? null,
-            "gender" => $request->gender,
-            "is_married" => $request->is_married,
-            "nid" => $request->nid,
-            "date_of_birth" => $request->date_of_birth ?? null,
-        ]);
-
-        $preRegistration->update([
-            'group_leader_id' => $request->group_leader_id,
-            'bank_id' => $request->bank_id,
-            'serial_no' => $request->serial_no,
-            'bank_voucher_no' => $request->bank_voucher_no ?? null,
-            'date' => $request->date,
-            'status' => $request->status,
-        ]);
-
-        return $this->success("Pre-registration updated successfully.");
-    }
-
     public function destroy(PreRegistration $preRegistration): JsonResponse
     {
+        return $this->error("Currently, pre-registration deletion is disabled.");
         $preRegistration->delete();
         return $this->success("Pre-registration deleted successfully.");
     }
@@ -750,7 +684,6 @@ class PreRegistrationController extends Controller
     public function updatePreRegDetails(Request $request, PreRegistration $preRegistration): JsonResponse
     {
         $validated = $request->validate([
-            'bank_id' => ['required', 'integer', 'exists:banks,id'],
             'serial_no' => ['required', 'string', 'max:100'],
             'tracking_no' => ['required', 'string', 'max:100'],
             'bank_voucher_no' => ['required', 'string', 'max:100'],
