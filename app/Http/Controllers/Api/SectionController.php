@@ -15,10 +15,9 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class SectionController extends Controller
 {
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
-        $perPage = $request->get('per_page', 10);
-        return SectionResource::collection(Section::typeOther()->paginate($perPage));
+        return SectionResource::collection(Section::typeOther()->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeeSectionController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::typeEmployee()->with('employee.user')->paginate($request->get('per_page', 10)));
+        return SectionResource::collection(Section::typeEmployee()->with('employee.user')->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

@@ -10,6 +10,7 @@ use App\Http\Resources\Api\LoanResource;
 use App\Http\Resources\Api\PilgrimResource;
 use App\Http\Resources\Api\RegistrationResource;
 use App\Http\Resources\Api\SectionResource;
+use App\Http\Resources\Api\TransactionResource;
 use App\Models\Loan;
 use App\Models\PreRegistration;
 use App\Models\Registration;
@@ -22,17 +23,16 @@ class TransactionController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        $perPage = request()->get('per_page', 15);
-        return \App\Http\Resources\Api\TransactionResource::collection(
+        return TransactionResource::collection(
             Transaction::with(['section', 'references.referenceable'])
                 ->latest()
-                ->paginate($perPage)
+                ->paginate(perPage())
         );
     }
 
-    public function show(Transaction $transaction): \App\Http\Resources\Api\TransactionResource
+    public function show(Transaction $transaction): TransactionResource
     {
-        return new \App\Http\Resources\Api\TransactionResource(
+        return new TransactionResource(
             $transaction->load(['section', 'references.referenceable'])
         );
     }

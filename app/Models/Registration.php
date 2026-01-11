@@ -41,6 +41,15 @@ class Registration extends Model
         return $this->belongsTo(Bank::class);
     }
 
+    // scopes
+    public function scopeCurrentYear($query)
+    {
+        $currentYear = Year::getCurrentYear();
+        if ($currentYear) return $query->where('year_id', $currentYear->id);
+
+        return $query;
+    }
+
     protected static function booted()
     {
         static::creating(function (Registration $model) {

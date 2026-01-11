@@ -14,9 +14,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BorrowingSectionController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
-        return LoanResource::collection(Loan::borrow()->with('loanable')->paginate($request->get('per_page', 10)));
+        return LoanResource::collection(Loan::borrow()->with('loanable')->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

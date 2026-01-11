@@ -19,7 +19,7 @@ class BankSectionController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::typeBank()->with('bank')->paginate(10));
+        return SectionResource::collection(Section::typeBank()->with('bank')->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

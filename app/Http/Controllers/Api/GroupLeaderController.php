@@ -18,7 +18,7 @@ class GroupLeaderController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return GroupLeaderResource::collection(GroupLeader::with(['user', 'section'])->paginate(10));
+        return GroupLeaderResource::collection(GroupLeader::with(['user', 'section'])->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

@@ -31,7 +31,7 @@ class UmrahController extends Controller
             'pilgrim.user.permanentAddress',
             'package',
             'passports'
-        ])->latest()->paginate(request()->get('per_page', 10)));
+        ])->latest()->paginate(perPage()));
     }
 
     public function packages(): JsonResponse

@@ -15,7 +15,11 @@ class UmrahPackageController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return PackageResource::collection(Package::umrah()->with('umrahs')->paginate(request()->get('per_page', 10)));
+        return PackageResource::collection(
+            Package::umrah()
+                ->with('umrahs')
+                ->paginate(perPage())
+        );
     }
 
     public function store(Request $request): JsonResponse

@@ -14,7 +14,7 @@ class HajjPackageController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return PackageResource::collection(Package::hajj()->paginate(request()->get('per_page', 10)));
+        return PackageResource::collection(Package::hajj()->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

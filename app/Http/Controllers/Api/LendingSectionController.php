@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class LendingSectionController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
-        return LoanResource::collection(Loan::lend()->with('loanable')->paginate($request->get('per_page', 10)));
+        return LoanResource::collection(Loan::lend()->with('loanable')->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

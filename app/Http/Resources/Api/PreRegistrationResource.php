@@ -33,6 +33,7 @@ class PreRegistrationResource extends JsonResource
                 "groupLeader" => new GroupLeaderResource($this->whenLoaded("groupLeader")),
                 "bank" => new BankResource($this->whenLoaded("bank")),
                 'passport' => $this->when($this->resource->relationLoaded('passports'), fn() => $this->passport() ? new PassportResource($this->passport()) : null),
+                'registration' => new RegistrationResource($this->whenLoaded('registration')),
             ],
         ];
     }

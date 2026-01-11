@@ -21,8 +21,6 @@ class RegistrationResource extends JsonResource
             "id" => $this->id,
             "attributes" => [
                 "date" => $this->date,
-                "passportNumber" => $this->passport_number,
-                "passportExpiryDate" => $this->passport_expiry_date,
                 "status" => $this->status,
                 "createdAt" => $this->created_at,
                 "updatedAt" => $this->updated_at,

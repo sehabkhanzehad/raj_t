@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\PilgrimLogType;
-use App\Enums\PreRegistrationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\PreRegistrationResource;
 use App\Http\Resources\Api\TransactionResource;
-use App\Models\Bank;
 use App\Models\GroupLeader;
 use App\Models\Passport;
 use App\Models\Pilgrim;
@@ -23,17 +21,17 @@ use Illuminate\Validation\Rule;
 
 class PreRegistrationController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
         return PreRegistrationResource::collection(PreRegistration::with(
             [
                 'groupLeader',
                 'pilgrim.user.presentAddress',
                 'pilgrim.user.permanentAddress',
-                'groupLeader',
-                'passports'
+                'passports',
+                'registration',
             ]
-        )->latest()->paginate($request->get('per_page', 10)));
+        )->latest()->paginate(perPage()));
     }
 
     public function groupLeaders(): JsonResponse

@@ -13,9 +13,9 @@ use Illuminate\Http\JsonResponse;
 
 class BillSectionController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::typeBill()->with('bill')->paginate($request->get('per_page', 10)));
+        return SectionResource::collection(Section::typeBill()->with('bill')->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse

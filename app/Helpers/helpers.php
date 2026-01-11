@@ -29,3 +29,12 @@ if (!function_exists('db_info')) {
         ];
     }
 }
+
+if (!function_exists('perPage')) {
+    function perPage()
+    {
+        $perPage = request('per_page');
+        if (!is_numeric($perPage) || (int)$perPage <= 0) return 25;  // Validate: must be numeric, positive, and not zero
+        return min((int)$perPage, 100); // Max limit 100
+    }
+}

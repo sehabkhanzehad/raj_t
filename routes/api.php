@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\GroupLeaderSectionController;
 use App\Http\Controllers\Api\HajjPackageController;
 use App\Http\Controllers\Api\UmrahPackageController;
 use App\Http\Controllers\Api\LendingSectionController;
+use App\Http\Controllers\Api\PilgrimController;
 use App\Http\Controllers\Api\PreRegistrationController;
 use App\Http\Controllers\Api\RegistrationController;
 use App\Http\Controllers\Api\SectionController;
@@ -243,5 +244,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/passport/{passport}', [PreRegistrationController::class, 'updatePassport']);
 
         Route::get('/{preRegistration}/transactions', [PreRegistrationController::class, 'transactions']);
+    });
+
+
+    Route::prefix('pilgrims')->group(function () {
+        Route::get('/{type}/{id}', [PilgrimController::class, 'show']);
     });
 });

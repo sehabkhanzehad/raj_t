@@ -12,7 +12,7 @@ enum PilgrimLogType: string
 
         // Todo: think when implement it, keep store before status, when change status
     case HajjPreRegistered = 'hajj_pre_registered';
-    // case HajjRegistered = 'hajj_registered';
+    case HajjRegistered = 'hajj_registered';
     // case HajjPreRegArchived = 'hajj_archived';
     // case HajjPreRegCancelled = 'hajj_pre_reg_cancelled';
     // case HajjPreRegTransferred = 'hajj_pre_reg_transferred';
