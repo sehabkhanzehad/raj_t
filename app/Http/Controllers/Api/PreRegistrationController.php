@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\PilgrimLogType;
+use App\Enums\PreRegistrationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Web\StorePreRegRequest;
 use App\Http\Resources\Api\PreRegistrationResource;
@@ -32,7 +33,7 @@ class PreRegistrationController extends Controller
                 'passports',
                 'registration',
             ]
-        )->latest()->paginate(perPage()));
+        )->whereIn('status', [PreRegistrationStatus::Active, PreRegistrationStatus::Pending])->latest()->paginate(perPage()));
     }
 
     public function groupLeaders(): JsonResponse
