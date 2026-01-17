@@ -15,7 +15,17 @@ class PackageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $umrahs = $this->umrahs;
+        $pilgrims = $this->isUmrah() ? $this->umrahs : $this->registrations;
+        $registeredStatus = $this->isUmrah() ? 'registered' : 'active';
+
+        $statistics = ['total_pilgrims' => $pilgrims->count()];
+
+        // Add detailed statistics only for Umrah packages
+        if ($this->isUmrah()) {
+            $statistics['registered'] = $pilgrims->where('status', $registeredStatus)->count();
+            $statistics['cancelled'] = $pilgrims->where('status', 'cancelled')->count();
+            $statistics['completed'] = $pilgrims->where('status', 'completed')->count();
+        }
 
         return [
             'type' => 'package',
@@ -31,12 +41,7 @@ class PackageResource extends JsonResource
                 'status' => $this->status,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
-                'statistics' => [
-                    'total_pilgrims' => $umrahs->count(),
-                    'registered' => $umrahs->where('status', 'registered')->count(),
-                    'cancelled' => $umrahs->where('status', 'cancelled')->count(),
-                    'completed' => $umrahs->where('status', 'completed')->count(),
-                ],
+                'statistics' => $statistics,
             ],
             'relationships' => [
                 'year' => new YearResource($this->whenLoaded('year')),

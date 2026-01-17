@@ -8,4 +8,5 @@ Route::prefix('hajj-packages')->group(function () {
     Route::post('/', [HajjPackageController::class, 'store']);
     Route::put('/{package}', [HajjPackageController::class, 'update']);
     Route::delete('/{package}', [HajjPackageController::class, 'destroy']);
+    Route::get('/{package}/pilgrims', [HajjPackageController::class, 'pilgrims']);
 });

@@ -14,7 +14,7 @@ class HajjPackageController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return PackageResource::collection(Package::hajj()->paginate(perPage()));
+        return PackageResource::collection(Package::hajj()->with('registrations')->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse
@@ -65,5 +65,18 @@ class HajjPackageController extends Controller
         } catch (\Exception $e) {
             return $this->error('Failed to delete package: ' . $e->getMessage(), 500);
         }
+    }
+
+    public function pilgrims(Package $package): AnonymousResourceCollection
+    {
+        $perPage = request()->get('per_page', 10);
+        $registrations = $package->registrations()->with([
+            'pilgrim.user.presentAddress',
+            'pilgrim.user.permanentAddress',
+            'package',
+            'passports'
+        ])->latest()->paginate($perPage);
+
+        return \App\Http\Resources\Api\RegistrationResource::collection($registrations);
     }
 }
