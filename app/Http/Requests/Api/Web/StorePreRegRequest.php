@@ -52,67 +52,67 @@ class StorePreRegRequest extends FormRequest
             'new_pilgrim.birth_certificate_number' => ['nullable', 'string', 'unique:users,birth_certificate_number'],
             'new_pilgrim.date_of_birth' => ['required_with:new_pilgrim', 'date'],
 
-            'new_pilgrim.present_address' => ['required', 'array'],
+            'new_pilgrim.present_address' => ['required_with:new_pilgrim', 'array'],
             'new_pilgrim.present_address.house_no' => ['nullable', 'string', 'max:255'],
             'new_pilgrim.present_address.road_no' => ['nullable', 'string', 'max:255'],
-            'new_pilgrim.present_address.village' => ['required', 'string', 'max:255'],
-            'new_pilgrim.present_address.post_office' => ['required', 'string', 'max:255'],
-            'new_pilgrim.present_address.police_station' => ['required', 'string', 'max:255'],
-            'new_pilgrim.present_address.district' => ['required', 'string', 'max:255'],
-            'new_pilgrim.present_address.division' => ['required', 'string', 'max:255'],
-            'new_pilgrim.present_address.postal_code' => ['required', 'string', 'max:20'],
+            'new_pilgrim.present_address.village' => ['required_with:new_pilgrim', 'string', 'max:255'],
+            'new_pilgrim.present_address.post_office' => ['required_with:new_pilgrim', 'string', 'max:255'],
+            'new_pilgrim.present_address.police_station' => ['required_with:new_pilgrim', 'string', 'max:255'],
+            'new_pilgrim.present_address.district' => ['required_with:new_pilgrim', 'string', 'max:255'],
+            'new_pilgrim.present_address.division' => ['required_with:new_pilgrim', 'string', 'max:255'],
+            'new_pilgrim.present_address.postal_code' => ['required_with:new_pilgrim', 'string', 'max:20'],
             'new_pilgrim.present_address.country' => ['nullable', 'string', 'max:255'],
 
-            'same_as_present_address' => ['required', 'boolean'],
+            'same_as_present_address' => ['required_with:new_pilgrim', 'boolean'],
 
             'new_pilgrim.permanent_address' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'array'
             ],
             'new_pilgrim.permanent_address.house_no' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'nullable',
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.road_no' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'nullable',
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.village' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.post_office' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.police_station' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.district' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.division' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'string',
                 'max:255'
             ],
             'new_pilgrim.permanent_address.postal_code' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'string',
                 'max:20'
             ],
             'new_pilgrim.permanent_address.country' => [
-                Rule::requiredIf(fn() => !$this->sameAsPresentAddress()),
+                Rule::requiredIf(fn() => !$this->sameAsPresentAddress() && $this->newPilgrim()),
                 'nullable',
                 'string',
                 'max:255'
@@ -160,5 +160,10 @@ class StorePreRegRequest extends FormRequest
     private function newPassport(): bool
     {
         return $this->passport_type === 'new';
+    }
+
+    private function newPilgrim(): bool
+    {
+        return $this->pilgrim_type === 'new';
     }
 }
