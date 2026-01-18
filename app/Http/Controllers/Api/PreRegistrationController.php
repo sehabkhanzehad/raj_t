@@ -340,66 +340,57 @@ class PreRegistrationController extends Controller
                     return !$request->boolean('same_as_present_address');
                 }),
                 'nullable',
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.road_no' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
                 'nullable',
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.village' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.post_office' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.police_station' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.district' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.division' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
             'permanent_address.postal_code' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
-                'string',
-                'max:20'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:20'])
             ],
             'permanent_address.country' => [
                 Rule::requiredIf(function () use ($request) {
                     return !$request->boolean('same_as_present_address');
                 }),
                 'nullable',
-                'string',
-                'max:255'
+                Rule::when(!$request->boolean('same_as_present_address'), ['string', 'max:255'])
             ],
         ]);
 

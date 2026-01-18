@@ -106,7 +106,7 @@ class UmrahPackageController extends Controller
     {
         $request->validate([
             'umrah_id' => ['required', 'exists:umrahs,id'],
-            'voucher_no' => ['nullable', 'string', 'max:255'],
+            'voucher_no' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:400'],
             'amount' => ['required', 'numeric', 'min:0'],

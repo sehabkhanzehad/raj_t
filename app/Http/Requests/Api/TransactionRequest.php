@@ -54,12 +54,6 @@ class TransactionRequest extends FormRequest
             $rules['registration_ids.*'] = ['exists:registrations,id'];
         }
 
-        if ($section?->isGroupLeader()) {
-            $groupLeader = $section->groupLeader;
-            if ($groupLeader?->pilgrim_required) {
-                $rules['pre_registration_id'] =  ['required', 'exists:pre_registrations,id'];
-            }
-        }
 
         return $rules;
     }
@@ -69,7 +63,6 @@ class TransactionRequest extends FormRequest
         return match ($this->section()->type) {
             SectionType::Lend            => ['key' => 'loan_id', 'type' => Loan::class, 'isArray' => false],
             SectionType::Borrow          => ['key' => 'loan_id', 'type' => Loan::class, 'isArray' => false],
-            SectionType::GroupLeader     => ['key' => 'pre_registration_id', 'type' => PreRegistration::class, 'isArray' => false],
             SectionType::Registration    => ['key' => 'registration_ids', 'type' => Registration::class, 'isArray' => true],
             SectionType::PreRegistration => ['key' => 'pre_registration_ids', 'type' => PreRegistration::class, 'isArray' => true],
             default                      => throw new \Exception('Unsupported section type for references'),

@@ -133,7 +133,7 @@ class BankSectionController extends Controller
     public function deposit(Request $request, Section $section): JsonResponse
     {
         $request->validate([
-            "voucher_no" => ['nullable', 'string', 'max:100'],
+            "voucher_no" => ['required', 'string', 'max:100'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'amount' => ['required', 'numeric'],
@@ -157,7 +157,7 @@ class BankSectionController extends Controller
     public function withdraw(Request $request, Section $section): JsonResponse
     {
         $request->validate([
-            "voucher_no" => ['nullable', 'string', 'max:100'],
+            "voucher_no" => ['required', 'string', 'max:100'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'amount' => ['required', 'numeric'],

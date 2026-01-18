@@ -39,7 +39,7 @@ class TransactionController extends Controller
 
     public function sections(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::whereNotIn('type', [SectionType::Bank])->with('groupLeader')->orderBy('name')->get());
+        return SectionResource::collection(Section::whereNotIn('type', [SectionType::Bank, SectionType::GroupLeader])->orderBy('name')->get());
     }
 
     public function loans(): AnonymousResourceCollection
@@ -78,10 +78,6 @@ class TransactionController extends Controller
     public function store(TransactionRequest $request): JsonResponse
     {
         $section = $request->section();
-
-        if ($section->isGroupLeader()) {
-            return $this->error('Group Leader section transactions are not supported yet.', 400);
-        }
 
         if ($section->isloan()) {
             // Todo: Implement loan transaction  
