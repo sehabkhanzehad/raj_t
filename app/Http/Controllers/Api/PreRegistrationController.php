@@ -23,9 +23,9 @@ use Illuminate\Validation\Rule;
 
 class PreRegistrationController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return PreRegistrationResource::collection(PreRegistration::with(
+        $query = PreRegistration::with(
             [
                 'groupLeader',
                 'pilgrim.user.presentAddress',
@@ -33,7 +33,23 @@ class PreRegistrationController extends Controller
                 'passports',
                 'registration',
             ]
-        )->whereIn('status', [PreRegistrationStatus::Active, PreRegistrationStatus::Pending])->latest()->paginate(perPage()));
+        )->whereIn('status', [PreRegistrationStatus::Active, PreRegistrationStatus::Pending]);
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('serial_no', 'like', '%' . $search . '%')
+                    ->orWhere('tracking_no', 'like', '%' . $search . '%')
+                    ->orWhereHas('pilgrim.user', function ($userQuery) use ($search) {
+                        $userQuery->where('full_name', 'like', '%' . $search . '%')
+                            ->orWhere('full_name_bangla', 'like', '%' . $search . '%')
+                            ->orWhere('phone', 'like', '%' . $search . '%')
+                            ->orWhere('nid', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        return PreRegistrationResource::collection($query->latest()->paginate(perPage()));
     }
 
     public function groupLeaders(): JsonResponse
