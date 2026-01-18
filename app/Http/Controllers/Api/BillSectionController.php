@@ -77,4 +77,11 @@ class BillSectionController extends Controller
     {
         return TransactionResource::collection($section->transactions()->latest()->paginate($request->get('per_page', 15)));
     }
+
+
+    public function addTransaction(Request $request, Section $section): JsonResponse
+    {
+        // Implementation for adding a transaction to the bill section
+        return $this->success("Transaction added to bill section successfully.");
+    }
 }

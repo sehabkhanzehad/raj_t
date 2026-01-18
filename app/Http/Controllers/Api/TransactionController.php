@@ -41,6 +41,8 @@ class TransactionController extends Controller
     {
         return SectionResource::collection(Section::whereIn('type', [
             SectionType::Other,
+            SectionType::Employee,
+            SectionType::Bill,
         ])->orderBy('name')->get());
     }
 
