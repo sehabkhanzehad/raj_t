@@ -20,12 +20,31 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
+        $query = Transaction::with(['section', 'references.referenceable']);
+
+        // Search by voucher number
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('voucher_no', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by date range
+        if ($request->has('start_date') && !empty($request->start_date)) {
+            $query->where('date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && !empty($request->end_date)) {
+            $query->where('date', '<=', $request->end_date);
+        }
+
+        // Filter by specific date
+        if ($request->has('date') && !empty($request->date)) {
+            $query->where('date', $request->date);
+        }
+
         return TransactionResource::collection(
-            Transaction::with(['section', 'references.referenceable'])
-                ->latest()
-                ->paginate(perPage())
+            $query->latest()->paginate(perPage())
         );
     }
 

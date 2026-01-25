@@ -12,11 +12,12 @@ Route::prefix('sections')->group(function () {
 
     require __DIR__ . '/sections/banks.php';
 
-   
+
 
     Route::prefix('group-leaders')->group(function () {
         Route::get('/', [GroupLeaderSectionController::class, 'index']);
         Route::post('/', [GroupLeaderSectionController::class, 'store']);
+        Route::get('/{section}', [GroupLeaderSectionController::class, 'show']);
         Route::put('/{section}', [GroupLeaderSectionController::class, 'update']);
         Route::get('/{section}/transactions', [GroupLeaderSectionController::class, 'transactions']);
     });

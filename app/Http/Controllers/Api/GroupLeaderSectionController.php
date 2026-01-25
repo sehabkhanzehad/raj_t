@@ -19,7 +19,7 @@ class GroupLeaderSectionController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return SectionResource::collection(Section::typeGroupLeader()->with(['groupLeader.user'])->paginate(perPage()));
+        return SectionResource::collection(Section::typeGroupLeader()->with(['groupLeader.user', 'lastTransaction'])->paginate(perPage()));
     }
 
     public function store(Request $request): JsonResponse
@@ -36,7 +36,7 @@ class GroupLeaderSectionController extends Controller
             "phone" => ["nullable", "string", "max:20"],
             "gender" => ["required", "in:male,female,other"],
             'date_of_birth' => ['nullable', 'date'],
-            'pilgrim_required' => ['required', 'boolean'],
+            'track_payment' => ['required', 'boolean'],
             'status' => ['required', 'boolean']
         ]);
 
@@ -62,13 +62,18 @@ class GroupLeaderSectionController extends Controller
             GroupLeader::create([
                 "section_id" => $section->id,
                 "user_id" => $user->id,
-                "pilgrim_required" => $request->pilgrim_required,
+                "pilgrim_required" => $request->track_payment, // Todo: Need to chage the pilgrim_required field name everywhere, in db and code (backend) both
                 "group_name" => $request->group_name,
                 'status' => $request->status,
             ]);
         });
 
         return $this->success("Section created successfully.", 201);
+    }
+
+    public function show(Section $section): SectionResource
+    {
+        return new SectionResource($section->load('groupLeader.user'));
     }
 
     public function update(Request $request, Section $section): JsonResponse
