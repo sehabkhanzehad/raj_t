@@ -7,6 +7,7 @@ Route::prefix('pre-registrations')->group(function () {
     Route::get('group-leaders', [PreRegistrationController::class, 'groupLeaders']);
     Route::get('pilgrims', [PreRegistrationController::class, 'pilgrims']);
     Route::get('passports', [PreRegistrationController::class, 'passports']);
+
     Route::get('/', [PreRegistrationController::class, 'index']);
     Route::post('/', [PreRegistrationController::class, 'store']);
     Route::get('/{preRegistration}', [PreRegistrationController::class, 'show']);
@@ -18,6 +19,7 @@ Route::prefix('pre-registrations')->group(function () {
     Route::put('/{preRegistration}/pilgrim/addresses', [PreRegistrationController::class, 'updateAddresses']);
     Route::post('/{preRegistration}/pilgrim/avatar', [PreRegistrationController::class, 'updatePilgrimAvatar']);
     Route::put('/{preRegistration}/pilgrim/update-pre-registration', [PreRegistrationController::class, 'updatePreRegDetails']);
+    Route::put('/{preRegistration}/mark-as-registered', [PreRegistrationController::class, 'markAsRegistered']);
 
     // Passport routes
     Route::post('/{preRegistration}/passport', [PreRegistrationController::class, 'addPassport']);

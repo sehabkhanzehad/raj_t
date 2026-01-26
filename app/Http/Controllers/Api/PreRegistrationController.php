@@ -241,6 +241,31 @@ class PreRegistrationController extends Controller
         }
     }
 
+    public function markAsRegistered(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        $validated = $request->validate([
+            'serial_no' => ['required', 'string', 'max:100'],
+            'tracking_no' => ['required', 'string', 'max:100'],
+            'bank_voucher_no' => ['required', 'string', 'max:100'],
+            'voucher_name' => ['required', 'string', 'max:255'],
+            'date' => ['required', 'date'],
+        ]);
+
+        $validated['status'] = PreRegistrationStatus::Registered;
+
+        $preRegistration->update($validated);
+
+        PilgrimLog::add(
+            $preRegistration->pilgrim,
+            $preRegistration->id,
+            PreRegistration::class,
+            PilgrimLogType::HajjPreRegistered,
+            "Hajj Pre-Registration completed."
+        );
+
+        return $this->success("Marked as registered successfully.");
+    }
+
     public function show(PreRegistration $preRegistration): PreRegistrationResource
     {
         $preRegistration->load([

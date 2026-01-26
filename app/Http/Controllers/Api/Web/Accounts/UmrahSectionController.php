@@ -86,6 +86,8 @@ class UmrahSectionController extends Controller
             'group_leader_id' => ['nullable', 'exists:group_leaders,id'],
         ]);
 
+        // Todo: Add validation the group leder belongs to the selected package.
+
         $umrahCostSection = $this->section;
 
         $transaction = $umrahCostSection->transactions()->create([
