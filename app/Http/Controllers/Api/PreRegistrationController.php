@@ -251,7 +251,7 @@ class PreRegistrationController extends Controller
             'date' => ['required', 'date'],
         ]);
 
-        $validated['status'] = PreRegistrationStatus::Registered;
+        $validated['status'] = PreRegistrationStatus::Active;
 
         $preRegistration->update($validated);
 
