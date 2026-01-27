@@ -1,5 +1,11 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/msrajtr/api.msrajtravels.com
-    - /bin/rsync -av --delete --exclude='.git' --exclude='.env' ./ $DEPLOYPATH
+    - export DEPLOYPATH=/home/msrajtr1/api.msrajtravels.com
+    - /usr/local/bin/ea-php81 /usr/local/bin/composer install --no-dev --optimize-autoloader
+    - /usr/local/bin/ea-php81 artisan migrate --force
+    - /usr/local/bin/ea-php81 artisan config:cache
+    - /usr/local/bin/ea-php81 artisan route:cache
+    - /usr/local/bin/ea-php81 artisan view:cache
+    - npm install
+    - npm run build
