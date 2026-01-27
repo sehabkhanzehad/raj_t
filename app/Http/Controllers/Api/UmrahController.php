@@ -487,7 +487,7 @@ class UmrahController extends Controller
                     return !$request->boolean('same_as_present_address');
                 }),
                 'nullable',
-                'string',
+                "string",
                 'max:255'
             ],
             'permanent_address.road_no' => [
