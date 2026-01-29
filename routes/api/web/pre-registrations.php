@@ -9,6 +9,7 @@ Route::prefix('pre-registrations')->group(function () {
     Route::get('passports', [PreRegistrationController::class, 'passports']);
 
     Route::get('/', [PreRegistrationController::class, 'index']);
+    Route::get('/archived', [PreRegistrationController::class, 'archived']);
     Route::post('/', [PreRegistrationController::class, 'store']);
     Route::get('/{preRegistration}', [PreRegistrationController::class, 'show']);
     Route::delete('/{preRegistration}', [PreRegistrationController::class, 'destroy']);
@@ -19,7 +20,11 @@ Route::prefix('pre-registrations')->group(function () {
     Route::put('/{preRegistration}/pilgrim/addresses', [PreRegistrationController::class, 'updateAddresses']);
     Route::post('/{preRegistration}/pilgrim/avatar', [PreRegistrationController::class, 'updatePilgrimAvatar']);
     Route::put('/{preRegistration}/pilgrim/update-pre-registration', [PreRegistrationController::class, 'updatePreRegDetails']);
-    Route::put('/{preRegistration}/mark-as-registered', [PreRegistrationController::class, 'markAsRegistered']);
+
+    Route::put('/{preRegistration}/active', [PreRegistrationController::class, 'activePreRegistration']);
+    Route::put('/{preRegistration}/cancel', [PreRegistrationController::class, 'cancelPreRegistration']);
+    Route::put('/{preRegistration}/archive', [PreRegistrationController::class, 'archivePreRegistration']);
+    Route::put('/{preRegistration}/transfer', [PreRegistrationController::class, 'transferPreRegistration']);
 
     // Passport routes
     Route::post('/{preRegistration}/passport', [PreRegistrationController::class, 'addPassport']);

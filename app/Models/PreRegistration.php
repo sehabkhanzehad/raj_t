@@ -47,6 +47,10 @@ class PreRegistration extends Model
     {
         return $this->status === PreRegistrationStatus::Active;
     }
+    public function isPending(): bool
+    {
+        return $this->status === PreRegistrationStatus::Pending;
+    }
 
     public function markAsRegistered(): void
     {

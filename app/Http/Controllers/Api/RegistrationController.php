@@ -109,6 +109,9 @@ class  RegistrationController extends Controller
 
         $preRegistration = PreRegistration::findOrFail($request->pre_registration_id);
 
+        if (!$preRegistration->isActive()) return $this->error("This pre-registration is not active.", 409);
+
+
         if (Registration::where('pre_registration_id', $preRegistration->id)->exists()) {
             return $this->error("This pre-registration has already been registered for the current year.", 409);
         }

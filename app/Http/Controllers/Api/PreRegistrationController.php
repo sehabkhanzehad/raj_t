@@ -52,6 +52,49 @@ class PreRegistrationController extends Controller
         return PreRegistrationResource::collection($query->latest()->paginate(perPage()));
     }
 
+    public function archived(Request $request): AnonymousResourceCollection
+    {
+        $status = $request->get('status', 'all'); // Default to 'all' to maintain backward compatibility
+
+        $query = PreRegistration::with(
+            [
+                'groupLeader',
+                'pilgrim.user.presentAddress',
+                'pilgrim.user.permanentAddress',
+                'passports',
+                'registration',
+            ]
+        );
+
+        // Filter by status
+        if ($status === 'cancelled') {
+            $query->where('status', PreRegistrationStatus::Cancelled);
+        } elseif ($status === 'transferred') {
+            $query->where('status', PreRegistrationStatus::Transferred);
+        } elseif ($status === 'archived') {
+            $query->where('status', PreRegistrationStatus::Archived);
+        } else {
+            // 'all' or any other value returns all archived statuses
+            $query->whereIn('status', [PreRegistrationStatus::Archived, PreRegistrationStatus::Transferred, PreRegistrationStatus::Cancelled]);
+        }
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('serial_no', 'like', '%' . $search . '%')
+                    ->orWhere('tracking_no', 'like', '%' . $search . '%')
+                    ->orWhereHas('pilgrim.user', function ($userQuery) use ($search) {
+                        $userQuery->where('full_name', 'like', '%' . $search . '%')
+                            ->orWhere('full_name_bangla', 'like', '%' . $search . '%')
+                            ->orWhere('phone', 'like', '%' . $search . '%')
+                            ->orWhere('nid', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        return PreRegistrationResource::collection($query->latest()->paginate(perPage()));
+    }
+
     public function groupLeaders(): JsonResponse
     {
         $groupLeaders = GroupLeader::all()->map(function ($groupLeader) {
@@ -241,8 +284,10 @@ class PreRegistrationController extends Controller
         }
     }
 
-    public function markAsRegistered(Request $request, PreRegistration $preRegistration): JsonResponse
+    public function activePreRegistration(Request $request, PreRegistration $preRegistration): JsonResponse
     {
+        if (!$preRegistration->isPending()) return $this->error("Only pending pre-registrations can be activated.");
+
         $validated = $request->validate([
             'serial_no' => ['required', 'string', 'max:100'],
             'tracking_no' => ['required', 'string', 'max:100'],
@@ -260,10 +305,84 @@ class PreRegistrationController extends Controller
             $preRegistration->id,
             PreRegistration::class,
             PilgrimLogType::HajjPreRegistered,
-            "Hajj Pre-Registration completed."
+            "Hajj Pre-Registration completed.",
+            $preRegistration->status->value,
+            PreRegistrationStatus::Active->value
         );
 
         return $this->success("Marked as registered successfully.");
+    }
+
+    public function cancelPreRegistration(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        if (!$preRegistration->isActive()) return $this->error("Only active pre-registrations can be cancelled.");
+
+        $validated = $request->validate([
+            'cancel_date' => ['required', 'date'],
+        ]);
+
+        $validated['status'] = PreRegistrationStatus::Cancelled;
+
+        $preRegistration->update($validated);
+
+        PilgrimLog::add(
+            $preRegistration->pilgrim,
+            $preRegistration->id,
+            PreRegistration::class,
+            PilgrimLogType::HajjPreRegCancelled,
+            "Hajj Pre-Registration cancelled."
+        );
+
+        return $this->success("Marked as cancelled successfully.");
+    }
+
+    public function archivePreRegistration(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        if (!$preRegistration->isActive()) return $this->error("Only active pre-registrations can be archived.");
+
+        $validated = $request->validate([
+            'archive_date' => ['required', 'date'],
+        ]);
+
+        $validated['status'] = PreRegistrationStatus::Archived;
+
+        $preRegistration->update($validated);
+
+        PilgrimLog::add(
+            $preRegistration->pilgrim,
+            $preRegistration->id,
+            PreRegistration::class,
+            PilgrimLogType::HajjPreRegArchived,
+            "Hajj Pre-Registration archived."
+        );
+
+        return $this->success("Marked as archived successfully.");
+    }
+
+    public function transferPreRegistration(Request $request, PreRegistration $preRegistration): JsonResponse
+    {
+        if (!$preRegistration->isActive()) return $this->error("Only active pre-registrations can be transferred.");
+
+        $validated = $request->validate([
+            'transfer_date' => ['required', 'date'],
+            'note' => ['required', 'string', 'max:400'],
+        ]);
+
+        $preRegistration->update([
+            'transfer_date' => $validated['transfer_date'],
+            'transfer_note' => $validated['note'],
+            'status' => PreRegistrationStatus::Transferred,
+        ]);
+
+        PilgrimLog::add(
+            $preRegistration->pilgrim,
+            $preRegistration->id,
+            PreRegistration::class,
+            PilgrimLogType::HajjPreRegTransferred,
+            "Hajj Pre-Registration transferred."
+        );
+
+        return $this->success("Marked as transferred successfully.");
     }
 
     public function show(PreRegistration $preRegistration): PreRegistrationResource
