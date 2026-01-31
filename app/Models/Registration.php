@@ -6,6 +6,7 @@ use App\Enums\RegistrationStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Registration extends Model
 {
@@ -46,6 +47,11 @@ class Registration extends Model
     public function replace(): HasOne
     {
         return $this->hasOne(Replace::class);
+    }
+
+    public function logs(): MorphMany
+    {
+        return $this->morphMany(PilgrimLog::class, 'reference');
     }
 
     // Helpers

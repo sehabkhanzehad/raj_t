@@ -48,6 +48,11 @@ class Pilgrim extends Model
         return $this->hasOne(Passport::class)->latestOfMany();
     }
 
+    public function pilgrimLogs(): HasMany
+    {
+        return $this->hasMany(PilgrimLog::class);
+    }
+
 
     // public function groupLeader()
     // {
