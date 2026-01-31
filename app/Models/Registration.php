@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PilgrimLogType;
 use App\Enums\RegistrationStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,6 +64,13 @@ class Registration extends Model
     public function hasReplace(): bool
     {
         return $this->replace()->exists();
+    }
+
+    public function restoreToPreRegistration(): bool //!Note: Only for tinker
+    {
+        $this->preRegistration->markAsActive();
+        // $this->logs()->where('type', PilgrimLogType::HajjRegistered)->delete();
+        return $this->delete();
     }
 
     // scopes

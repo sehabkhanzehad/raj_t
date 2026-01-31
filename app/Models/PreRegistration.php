@@ -68,6 +68,12 @@ class PreRegistration extends Model
         return $this->status === PreRegistrationStatus::Registered && $this->registration()->exists();
     }
 
+    public function markAsActive(): void
+    {
+        $this->status = PreRegistrationStatus::Active;
+        $this->save();
+    }
+
     public function markAsCancelled($date = null): void
     {
         $this->status = PreRegistrationStatus::Cancelled;
