@@ -81,7 +81,8 @@ class PreRegistrationController extends Controller
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('serial_no', 'like', '%' . $search . '%')
+                $q->where('serial_no', 'like', "%$search%")
+                    ->orWhere('id', 'like', "%$search%")
                     ->orWhere('tracking_no', 'like', '%' . $search . '%')
                     ->orWhereHas('pilgrim.user', function ($userQuery) use ($search) {
                         $userQuery->where('full_name', 'like', '%' . $search . '%')

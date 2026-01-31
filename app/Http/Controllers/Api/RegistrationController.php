@@ -92,7 +92,7 @@ class  RegistrationController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        $validated1 = $request->validate([
             "pre_registration_id" => ["required", "integer", "exists:pre_registrations,id"],
             "package_id" => ["required", "integer", "exists:packages,id"],
             "bank_id" => ["required", "integer", "exists:banks,id"],
@@ -101,7 +101,7 @@ class  RegistrationController extends Controller
 
         $preRegistration = PreRegistration::findOrFail($request->pre_registration_id);
 
-        $request->validate([
+        $validated2 = $request->validate([
             "passport_number" => ['required', 'string', 'unique:passports,passport_number,' . $preRegistration->passport()?->id, 'max:100'],
             "passport_type" => ['required', 'in:ordinary,official,diplomatic'],
             "issue_date" => ['required', 'date'],
@@ -109,6 +109,8 @@ class  RegistrationController extends Controller
             "passport_file" => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'passport_notes' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        $validated = array_merge($validated1, $validated2);
 
         if (!$preRegistration->isActive()) return $this->error("This pre-registration is not active.", 409);
 
