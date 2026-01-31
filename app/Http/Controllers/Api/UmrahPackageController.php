@@ -88,6 +88,22 @@ class UmrahPackageController extends Controller
             $query->where('group_leader_id', $request->group_leader);
         }
 
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('pilgrim.user', function ($userQuery) use ($search) {
+                    $userQuery->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('nid', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                    ->orWhereHas('pilgrim.passports', function ($passportQuery) use ($search) {
+                        $passportQuery->where('passport_number', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         $umrahs = $query->with([
             'groupLeader',
             'pilgrim.user.presentAddress',
