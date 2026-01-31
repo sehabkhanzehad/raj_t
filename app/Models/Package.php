@@ -6,6 +6,7 @@ use App\Enums\PackageType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Package extends Model
 {
@@ -31,6 +32,12 @@ class Package extends Model
     public function umrahs(): HasMany
     {
         return $this->hasMany(Umrah::class);
+    }
+
+    public function groupLeaders(): HasManyThrough
+    {
+        $throughModel = $this->isHajj() ? Registration::class : Umrah::class;
+        return $this->hasManyThrough(GroupLeader::class, $throughModel, 'package_id', 'id', 'id', 'group_leader_id')->distinct();
     }
 
     // Scopes

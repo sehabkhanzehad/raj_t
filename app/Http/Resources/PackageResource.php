@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Api\GroupLeaderResource;
 use App\Http\Resources\Api\YearResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -44,6 +45,7 @@ class PackageResource extends JsonResource
                 'statistics' => $statistics,
             ],
             'relationships' => [
+                'groupLeaders' => GroupLeaderResource::collection($this->whenLoaded('groupLeaders')),
                 'year' => new YearResource($this->whenLoaded('year')),
             ],
         ];

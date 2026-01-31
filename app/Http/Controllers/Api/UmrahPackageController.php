@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\PackageType;
 use App\Enums\PilgrimLogType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\GroupLeaderResource;
 use App\Http\Resources\PackageResource;
 use App\Models\Package;
 use App\Models\PilgrimLog;
@@ -76,19 +77,24 @@ class UmrahPackageController extends Controller
 
     public function show(Package $package): PackageResource
     {
-        return new PackageResource($package->load('umrahs'));
+        return new PackageResource($package->load('umrahs', 'groupLeaders.user'));
     }
 
-    public function pilgrims(Package $package): AnonymousResourceCollection
+    public function pilgrims(Request $request, Package $package): AnonymousResourceCollection
     {
-        $perPage = request()->get('per_page', 10);
-        $umrahs = $package->umrahs()->with([
+        $query = $package->umrahs();
+
+        if ($request->has('group_leader') && $request->group_leader) {
+            $query->where('group_leader_id', $request->group_leader);
+        }
+
+        $umrahs = $query->with([
             'groupLeader',
             'pilgrim.user.presentAddress',
             'pilgrim.user.permanentAddress',
             'package',
             'passports'
-        ])->latest()->paginate($perPage);
+        ])->latest()->paginate(perPage());
 
         return \App\Http\Resources\Api\UmrahResource::collection($umrahs);
     }

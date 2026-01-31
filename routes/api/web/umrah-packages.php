@@ -9,6 +9,9 @@ Route::prefix('umrah-packages')->group(function () {
     Route::get('/{package}', [UmrahPackageController::class, 'show']);
     Route::put('/{package}', [UmrahPackageController::class, 'update']);
     Route::delete('/{package}', [UmrahPackageController::class, 'destroy']);
+
+
+
     Route::get('/{package}/pilgrims', [UmrahPackageController::class, 'pilgrims']);
 
     Route::get('/{package}/pilgrims-for-collection', [UmrahPackageController::class, 'pilgrimsForCollection']);
