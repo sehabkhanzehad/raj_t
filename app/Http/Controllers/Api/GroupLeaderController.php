@@ -236,7 +236,7 @@ class GroupLeaderController extends Controller
             }
         }
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $section, $umrah) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $section) {
             $transaction = $section->transactions()->create([
                 'type' => $request->type,
                 'voucher_no' => $request->voucher_no,
@@ -260,6 +260,8 @@ class GroupLeaderController extends Controller
                     'referenceable_type' => Umrah::class,
                     'referenceable_id' => $request->umrah_id,
                 ]);
+
+                $umrah = Umrah::find($request->umrah_id);
 
                 PilgrimLog::add(
                     $umrah->pilgrim,
