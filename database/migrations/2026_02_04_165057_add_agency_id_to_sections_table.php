@@ -16,10 +16,7 @@ return new class extends Migration
             $table->dropUnique(['code']);
 
             // Add agency_id column
-            $table->foreignUuid('agency_id')->nullable()->after('id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->uuid('agency_id')->nullable()->after('id');
 
             // Add composite unique constraint on agency_id and code
             $table->unique(['agency_id', 'code'], 'sections_agency_id_code_unique');
@@ -36,7 +33,6 @@ return new class extends Migration
             $table->dropUnique('sections_agency_id_code_unique');
 
             // Drop foreign key and column
-            $table->dropForeign(['agency_id']);
             $table->dropColumn('agency_id');
 
             // Restore unique constraint on code

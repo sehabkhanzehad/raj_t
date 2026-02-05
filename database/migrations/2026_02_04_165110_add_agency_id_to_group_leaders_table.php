@@ -25,10 +25,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             // Add agency_id column
-            $table->foreignUuid('agency_id')->nullable()->after('id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->uuid('agency_id')->nullable()->after('id');
 
             // Add composite unique constraint on agency_id and user_id
             $table->unique(['agency_id', 'user_id']);
@@ -45,7 +42,6 @@ return new class extends Migration
             $table->dropUnique(['agency_id', 'user_id']);
 
             // Drop foreign key and column
-            $table->dropForeign(['agency_id']);
             $table->dropColumn('agency_id');
 
             // Drop the foreign key on user_id
