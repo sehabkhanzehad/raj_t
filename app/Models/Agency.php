@@ -34,6 +34,16 @@ class Agency extends Model
         return $this->hasMany(Customer::class, 'agency_id', 'id');
     }
 
+    public function sections(): HasMany
+    {
+        return $this->hasMany(Section::class);
+    }
+
+    public function groupLeaders(): HasMany
+    {
+        return $this->hasMany(GroupLeader::class);
+    }
+
     // Helpers
     public function canAccess(Customer $customer): bool
     {

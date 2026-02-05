@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToAgency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class GroupLeader extends Model
 {
+    use BelongsToAgency;
+
     protected $casts = [
         'status' => 'boolean',
         'pilgrim_required' => 'boolean',

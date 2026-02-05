@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class SectionController extends Controller
 {
-
     public function index(): AnonymousResourceCollection
     {
         return SectionResource::collection(Section::typeOther()->orderBy('code')->paginate(perPage()));
