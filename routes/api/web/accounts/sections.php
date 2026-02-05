@@ -3,10 +3,10 @@
 use App\Http\Controllers\Api\BillSectionController;
 use App\Http\Controllers\Api\BorrowingSectionController;
 use App\Http\Controllers\Api\EmployeeSectionController;
-use App\Http\Controllers\Api\GroupLeaderSectionController;
 use App\Http\Controllers\Api\LendingSectionController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\Web\Accounts\UmrahSectionController;
+use App\Http\Controllers\Api\Web\Customer\Accounts\GroupLeaderSectionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('sections')->group(function () {
@@ -23,10 +23,10 @@ Route::prefix('sections')->group(function () {
     });
 
     Route::prefix('group-leaders')->group(function () {
-        Route::get('/', [GroupLeaderSectionController::class, 'index']);
-        Route::post('/', [GroupLeaderSectionController::class, 'store']);
-        Route::get('/{section}', [GroupLeaderSectionController::class, 'show']);
-        Route::put('/{section}', [GroupLeaderSectionController::class, 'update']);
+        Route::get('/', [GroupLeaderSectionController::class, 'index']); // ✅
+        Route::post('/', [GroupLeaderSectionController::class, 'store']); // ✅
+        Route::get('/{section}', [GroupLeaderSectionController::class, 'show']); // ✅
+        Route::put('/{section}', [GroupLeaderSectionController::class, 'update']); // ✅
         Route::get('/{section}/transactions', [GroupLeaderSectionController::class, 'transactions']);
     });
 

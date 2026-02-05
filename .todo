@@ -1,10 +1,17 @@
-রেজিস্ট্রেশন ডিটেলস 
-1. এনআইডি 1. পাসপোর্ট 
-2. সিরিয়াল নাম্বার 2. ট্রাকিং নাম্বার 
-3. ভাউচার নাম্বার 3. পাসপোর্ট এক্সপার্ট ডেট 
+// -[] prevent duplicate entry for user with followiing doc
 
 
 
-// Make bank_id null
-// add tracking_no, voucher_name
-// make serial_no, bank_voucher_no, tracking_no, voucher_name, date nullable when status is pending
+
+
+
+// After deployed
+// -[] Add agency id to the groups table and its section table
+// -[] remove nullabe from agency id from every table that added with nullable
+
+
+
+
+
+// -[] Need to update the group leader update method and its frontend part
+// -[] Need to update the group leader store frontend just 

@@ -5,11 +5,12 @@ use App\Http\Controllers\Api\PilgrimController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\YearController;
+use App\Http\Middleware\ResolveAgency;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/web/auth.php';
 
-Route::middleware('auth:customer-api')->group(function () {
+Route::middleware(['auth:customer-api', ResolveAgency::class])->group(function () {
     // Management
     Route::prefix('analytics')->group(function () {
         Route::get('dashboard', [AnalyticsController::class, 'dashboard']);

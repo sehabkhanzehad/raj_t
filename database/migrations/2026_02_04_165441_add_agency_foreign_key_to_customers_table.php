@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->uuid('agency_id')->nullable()->after('id');
+            $table->foreign('agency_id')
+                ->references('id')
+                ->on('agencies')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
         });
     }
 
@@ -22,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn('agency_id');
+            $table->dropForeign(['agency_id']);
         });
     }
 };

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Web\Customer\Accounts;
 
 use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
@@ -25,7 +25,7 @@ class GroupLeaderSectionController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            "code" => ["required", "string", "unique:sections,code"],
+            "code" => ["required", "string", uniqueInAgency('sections', 'code')],
             "description" => ["nullable", "string"],
             "group_name" => ["required", "string", "max:255"],
             "first_name" => ["required", "string", "max:255"],
@@ -35,6 +35,8 @@ class GroupLeaderSectionController extends Controller
             "email" => ["nullable", "string", "email", "max:255", "unique:users,email"],
             "phone" => ["nullable", "string", "max:20"],
             "gender" => ["required", "in:male,female,other"],
+            "country" => ["required", "string", "max:100"],
+            'nid' => ['required', 'string', 'max:100'],
             'date_of_birth' => ['nullable', 'date'],
             'track_payment' => ['required', 'boolean'],
             'status' => ['required', 'boolean']
@@ -48,7 +50,10 @@ class GroupLeaderSectionController extends Controller
                 "description" => $request->description,
             ]);
 
-            $user = User::create([
+            $user = User::firstOrCreate([
+                'country' => $request->country,
+                'nid' => $request->nid
+            ], [
                 "first_name" => $request->first_name,
                 "last_name" => $request->last_name ?? null,
                 "mother_name" => $request->mother_name ?? null,

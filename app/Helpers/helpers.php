@@ -1,5 +1,25 @@
 <?php
 
+use App\Models\Agency;
+use App\Models\User;
+use Illuminate\Support\Facades\Context;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
+
+if (!function_exists('currentAgency')) {
+    function currentAgency(): ?Agency
+    {
+        return Context::getHidden('current_agency');
+    }
+}
+
+if (!function_exists('currentUser')) {
+    function currentUser(): ?User
+    {
+        return request()->user();
+    }
+}
+
 if (!function_exists('db_info')) {
     /**
      * Get database connection information
@@ -36,5 +56,15 @@ if (!function_exists('perPage')) {
         $perPage = request('per_page');
         if (!is_numeric($perPage) || (int)$perPage <= 0) return 25;  // Validate: must be numeric, positive, and not zero
         return min((int)$perPage, 100); // Max limit 100
+    }
+}
+
+if (!function_exists('uniqueInAgency')) {
+    function uniqueInAgency(string $table, string $column, $ignore = null): Unique
+    {
+        // Note: This function uses the current agency
+        return Rule::unique($table, $column)
+            ->where('agency_id', currentAgency()->id)
+            ->ignore($ignore);
     }
 }

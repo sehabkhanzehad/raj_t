@@ -23,13 +23,20 @@ class Agency extends Model
         'email',
     ];
 
-    public function customer(): BelongsTo
+    // Relations
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
     public function teamMembers(): HasMany
     {
         return $this->hasMany(Customer::class, 'agency_id', 'id');
+    }
+
+    // Helpers
+    public function canAccess(Customer $customer): bool
+    {
+        return $customer->isOwner() ? $this->owner()->is($customer) : $customer->customerAgency()->is($this);
     }
 }

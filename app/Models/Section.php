@@ -5,12 +5,15 @@ namespace App\Models;
 use App\Enums\LoanStatus;
 use App\Enums\SectionType;
 use App\Http\Requests\Api\TransactionRequest;
+use App\Models\Traits\BelongsToAgency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Section extends Model
 {
+    use BelongsToAgency;
+
     protected $casts = [
         'type' => SectionType::class,
     ];
