@@ -24,7 +24,10 @@ class YearController extends Controller
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
         ]);
 
-        Year::create($validated);
+        Year::create([
+            ...$validated,
+            'default' => Year::currentAgency()->default()->doesntExist(),
+        ]);
 
         return $this->success("Year created successfully.", 201);
     }
