@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Enums\CustomerRole;
 use App\Models\Traits\HasAvatar;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\NewAccessToken;
 
 class Customer extends Authenticatable
 {
@@ -36,14 +37,13 @@ class Customer extends Authenticatable
     ];
 
     // Relations
-    public function agency(): HasOne
+    public function agency(): Relation
     {
-        return $this->hasOne(Agency::class);
-    }
-
-    public function customerAgency(): BelongsTo
-    {
-        return $this->belongsTo(Agency::class, 'agency_id', 'id');
+        return match (true) {
+            $this->isOwner()      => $this->hasOne(Agency::class),
+            $this->isTeamMember() => $this->belongsTo(Agency::class, 'agency_id', 'id'),
+            default               => throw new \Exception("Invalid customer role for agency relation."),
+        };
     }
 
     // Helpers
@@ -55,5 +55,29 @@ class Customer extends Authenticatable
     public function isTeamMember(): bool
     {
         return $this->role === CustomerRole::TeamMember;
+    }
+
+    /**
+     * Create a new personal access token for the user.
+     *
+     * @param  string  $name
+     * @param  string  $yearId
+     * @param  array  $abilities
+     * @param  \DateTimeInterface|null  $expiresAt
+     * @return \Laravel\Sanctum\NewAccessToken
+     */
+    public function createToken(string $name, string $yearId, array $abilities = ['*'], ?DateTimeInterface $expiresAt = null)
+    {
+        $plainTextToken = $this->generateTokenString();
+
+        $token = $this->tokens()->create([
+            'name' => $name,
+            'year_id' => $yearId,
+            'token' => hash('sha256', $plainTextToken),
+            'abilities' => $abilities,
+            'expires_at' => $expiresAt,
+        ]);
+
+        return new NewAccessToken($token, "{$token->id}|$plainTextToken");
     }
 }

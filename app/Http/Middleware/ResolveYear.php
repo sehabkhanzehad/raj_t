@@ -19,11 +19,9 @@ class ResolveYear
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // $agency = $request->user()->agency;
+        $accessToken = $request->user()->currentAccessToken();
 
-        // if (!$agency || !$agency->canAccess($request->user())) return $this->error('Invalid Agency or Access Denied.', 403);
-
-        // Context::addHidden('current_agency', $agency);
+        Context::addHidden('current_year', $accessToken->currentYear);
 
         return $next($request);
     }

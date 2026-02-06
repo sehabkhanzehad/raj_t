@@ -2,6 +2,7 @@
 
 use App\Models\Agency;
 use App\Models\User;
+use App\Models\Year;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
@@ -10,6 +11,13 @@ if (!function_exists('currentAgency')) {
     function currentAgency(): ?Agency
     {
         return Context::getHidden('current_agency');
+    }
+}
+
+if (!function_exists('currentYear')) {
+    function currentYear(): ?Year
+    {
+        return Context::getHidden('current_year');
     }
 }
 

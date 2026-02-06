@@ -53,6 +53,11 @@ class Agency extends Model
     // Helpers
     public function canAccess(Customer $customer): bool
     {
-        return $customer->isOwner() ? $this->owner()->is($customer) : $customer->customerAgency()->is($this);
+        return $customer->isOwner() ? $this->owner()->is($customer) : $this->id === $customer->agency_id;
+    }
+
+    public function defaultYear(): ?Year
+    {
+        return $this->years()->getDefaultYear();
     }
 }

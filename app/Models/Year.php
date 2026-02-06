@@ -13,7 +13,7 @@ class Year extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'status' => 'boolean',
+        'default' => 'boolean',
     ];
 
     protected $guarded = ['id'];
@@ -35,19 +35,19 @@ class Year extends Model
     }
 
     // Helpers
-    public function isActive(): bool
+    public function isDefault(): bool
     {
-        return $this->status;
+        return $this->default;
     }
 
-    public static function getCurrentYear(): ?Year
+    public static function getDefaultYear(): ?Year
     {
-        return self::active()->first();
+        return self::default()->first();
     }
 
     // Scopes
-    public function scopeActive($query)
+    public function scopeDefault($query)
     {
-        return $query->where('status', true);
+        return $query->where('default', true);
     }
 }
