@@ -39,7 +39,6 @@ class Year extends Model
     {
         return $this->status;
     }
-
     public static function getCurrentYear(): ?Year
     {
         return self::active()->first();

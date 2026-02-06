@@ -35,15 +35,14 @@ class YearController extends Controller
             'name' => ['required', 'string', 'max:50', uniqueInAgency('years', 'name', $year->id)],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'status' => ['required', 'boolean'],
         ]);
-        // Todo: remove status from here and also from frontend
 
         $year->update($validated);
 
         return $this->success("Year updated successfully.");
     }
+    
 
-    // Todo: add year active method to activate a year
-    //? Note: when a year is activated, all other years should be deactivated
+    // Todo: add year updateDefault method to change default year
+    //? Note: when a year is default, all other years should be default false
 }
