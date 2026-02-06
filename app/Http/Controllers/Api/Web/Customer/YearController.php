@@ -41,11 +41,8 @@ class YearController extends Controller
 
         return $this->success("Year updated successfully.");
     }
-
-
     // Todo: add year updateDefault method to change default year
     //? Note: when a year is default, all other years should be default false
-
     public function updateDefault(Year $year): JsonResponse
     {
         // Set all years to default false
