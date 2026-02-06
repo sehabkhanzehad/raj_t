@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PilgrimLogType;
 use App\Enums\RegistrationStatus;
+use App\Traits\HasYear;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Registration extends Model
 {
+    use HasYear;
+
     protected $casts = [
         "date" => 'date',
         "status" => RegistrationStatus::class,
@@ -20,11 +23,6 @@ class Registration extends Model
     protected $guarded = ['id'];
 
     // Relations
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(Year::class);
-    }
-
     public function preRegistration(): BelongsTo
     {
         return $this->belongsTo(PreRegistration::class);
@@ -76,16 +74,6 @@ class Registration extends Model
     // scopes
     public function scopeCurrentYear($query)
     {
-        $currentYear = Year::getCurrentYear();
-        if ($currentYear) return $query->where('year_id', $currentYear->id);
-
-        return $query;
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Registration $model) {
-            $model->year_id = Year::getCurrentYear()?->id;
-        });
+        currentYear() ? $query->where('year_id', currentYear()->id) : $query;
     }
 }

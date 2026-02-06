@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use App\Enums\PackageType;
+use App\Traits\HasYear;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Package extends Model
 {
+    use HasYear;
+
     protected $casts = [
         'type' => PackageType::class,
         'status' => 'boolean',
@@ -18,11 +20,6 @@ class Package extends Model
     ];
 
     protected $guarded = ['id'];
-
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(Year::class);
-    }
 
     public function registrations(): HasMany
     {
@@ -65,12 +62,5 @@ class Package extends Model
     public function isUmrah(): bool
     {
         return $this->type === PackageType::Umrah;
-    }
-
-    protected static function booted()
-    {
-        static::creating(function (Package $model) {
-            $model->year_id = Year::getCurrentYear()?->id;
-        });
     }
 }

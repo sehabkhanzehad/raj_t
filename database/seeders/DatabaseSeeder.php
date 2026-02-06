@@ -21,35 +21,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $customer =  Customer::updateOrCreate(
-            ['email' => 'skzehad@gmail.com'],
-            [
-                'name' => 'Sk Zehad',
-                'role' => CustomerRole::Customer,
-                'password' => '1235412354',
-            ]
-        );
+        // $customer =  Customer::updateOrCreate(
+        //     ['email' => 'skzehad@gmail.com'],
+        //     [
+        //         'name' => 'Sk Zehad',
+        //         'role' => CustomerRole::Customer,
+        //         'password' => '1235412354',
+        //     ]
+        // );
 
-        $customer->agency()->updateOrCreate([], [
-            'name' => 'Sk Zehad Travels',
-            'license' => '0935',
-            'address' => 'Nayagola, Nayagola Hat-6300, Chapainawabganj, Rajshahi, Dhaka, Bangladesh',
-            'phone' => '+8801744646344',
-            'email' => 'skzehad@gmail.com',
-        ]);
+        // $customer->agency()->updateOrCreate([], [
+        //     'name' => 'Sk Zehad Travels',
+        //     'license' => '0935',
+        //     'address' => 'Nayagola, Nayagola Hat-6300, Chapainawabganj, Rajshahi, Dhaka, Bangladesh',
+        //     'phone' => '+8801744646344',
+        //     'email' => 'skzehad@gmail.com',
+        // ]);
 
         if (app()->environment('production')) return;
 
         $this->createCustomerOne();
         $this->createCustomerTwo();
 
-        Year::updateOrCreate([
-            'name' => 'Hajj 2026',
-        ], [
-            "start_date" => "2025-06-01",
-            "end_date" => "2026-05-31",
-            "status" => true,
-        ]);
+
 
 
 
@@ -132,6 +126,15 @@ class DatabaseSeeder extends Seeder
             'role' => CustomerRole::TeamMember,
             'password' => 'password',
         ]);
+
+        Year::updateOrCreate([
+            'name' => 'Hajj 2026',
+            'agency_id' => $agency->id,
+        ], [
+            "start_date" => "2025-06-01",
+            "end_date" => "2026-05-31",
+            "default" => true,
+        ]);
     }
 
     private function createCustomerTwo(): void
@@ -159,6 +162,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'Team Member Two',
             'role' => CustomerRole::TeamMember,
             'password' => 'password',
+        ]);
+
+        Year::updateOrCreate([
+            'name' => 'Hajj 2026',
+            'agency_id' => $agency->id,
+        ], [
+            "start_date" => "2025-06-01",
+            "end_date" => "2026-05-31",
+            "default" => true,
         ]);
 
         $groupLeaderSection = Section::UpdateOrCreate(

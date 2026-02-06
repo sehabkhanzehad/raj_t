@@ -25,7 +25,7 @@ class AnalyticsController extends Controller
      */
     public function dashboard(Request $request)
     {
-        $yearId = $request->input('year_id', Year::getCurrentYear()?->id);
+        $yearId = $request->input('year_id', currentYear()?->id);
 
         return response()->json([
             'overview' => $this->getOverviewStats($yearId),
@@ -52,7 +52,7 @@ class AnalyticsController extends Controller
                     'end_date' => $y->end_date->format('Y-m-d'),
                     'is_active' => $y->status,
                 ]),
-            'current_year_id' => Year::getCurrentYear()?->id,
+            'current_year_id' => currentYear()?->id,
         ]);
     }
 
@@ -310,7 +310,7 @@ class AnalyticsController extends Controller
      */
     public function incomeExpense(Request $request)
     {
-        $yearId = $request->input('year_id', Year::getCurrentYear()?->id);
+        $yearId = $request->input('year_id', currentYear()?->id);
         $period = $request->input('period', 'monthly'); // daily, weekly, monthly, yearly
 
         $query = Transaction::where('year_id', $yearId);

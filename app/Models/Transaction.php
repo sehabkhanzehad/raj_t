@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SectionType;
 use App\Http\Requests\Api\TransactionRequest;
+use App\Traits\HasYear;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 
 class Transaction extends Model
 {
+    use HasYear;
     // use HasReferences;
 
     protected $guarded = ['id'];
@@ -27,11 +29,6 @@ class Transaction extends Model
     public function loan(): BelongsTo
     {
         return $this->belongsTo(Loan::class);
-    }
-
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(Year::class);
     }
 
     public function references(): HasMany
@@ -58,12 +55,5 @@ class Transaction extends Model
                 'referenceable_id' => $request->{$config['key']},
             ]);
         }
-    }
-
-    protected static function booted()
-    {
-        static::creating(function (Transaction $model) {
-            $model->year_id = Year::getCurrentYear()?->id;
-        });
     }
 }

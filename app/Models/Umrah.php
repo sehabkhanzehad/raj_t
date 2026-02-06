@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\UmrahStatus;
 use App\Models\Traits\HasPassport;
+use App\Traits\HasYear;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -11,18 +12,14 @@ use App\Models\Transaction;
 
 class Umrah extends Model
 {
-    use HasPassport;
+    use HasPassport,
+        HasYear;
 
     protected $casts = [
         'status' => UmrahStatus::class,
     ];
 
     protected $guarded = ['id'];
-
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(Year::class);
-    }
 
     public function groupLeader(): BelongsTo
     {
@@ -42,13 +39,6 @@ class Umrah extends Model
     public function references(): MorphMany
     {
         return $this->morphMany(Reference::class, 'referenceable');
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Umrah $model) {
-            $model->year_id = Year::getCurrentYear()?->id;
-        });
     }
 
     public function totalCollect(): float
