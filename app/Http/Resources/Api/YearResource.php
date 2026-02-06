@@ -22,7 +22,7 @@ class YearResource extends JsonResource
                 'startDate' => $this->start_date,
                 'endDate' => $this->end_date,
                 'status' => $this->status,
-                'isActive' => $this->isActive(),
+                'default' => $this->default,
                 'createdAt' => $this->created_at,
                 'updatedAt' => $this->updated_at,
             ],

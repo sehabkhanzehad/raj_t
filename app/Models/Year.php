@@ -50,4 +50,9 @@ class Year extends Model
     {
         return $query->where('default', true);
     }
+
+    public function scopeCurrentAgency($query)
+    {
+        return $query->where('agency_id', currentAgency()->id);
+    }
 }

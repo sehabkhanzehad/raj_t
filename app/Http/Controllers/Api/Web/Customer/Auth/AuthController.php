@@ -24,7 +24,7 @@ class AuthController extends Controller
 
         $token = $user->createToken(
             'auth_token',
-            $user->agency->getDefaultYear()->id,
+            $user->agency->defaultYear()?->id,
             expiresAt: $request->remember ? now()->addYear() : now()->addDay()
         )->plainTextToken;
 

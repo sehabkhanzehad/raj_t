@@ -47,7 +47,7 @@ class Agency extends Model
 
     public function years(): HasMany
     {
-        return $this->hasMany(Year::class, 'agency_id', 'id');
+        return $this->hasMany(Year::class);
     }
 
     // Helpers
@@ -58,6 +58,6 @@ class Agency extends Model
 
     public function defaultYear(): ?Year
     {
-        return $this->years()->getDefaultYear();
+        return Year::getDefaultYear();
     }
 }
