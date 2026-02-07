@@ -42,7 +42,7 @@ Route::middleware(['auth:customer-api', ResolveAgency::class, ResolveYear::class
     Route::post('user/change-password', [UserController::class, 'changePassword']);
 
 
-    require __DIR__ . '/web/customer/years.php';
+    require __DIR__ . '/web/customer/years.php'; // ✅
 
 
 

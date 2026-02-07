@@ -4,5 +4,4 @@
 // -[] Need to update the group leader store frontend just
 
 
-
-// -[] Add agency id to years table, and remove nullable after deployment
+// remove nullable from agency id from pilgrim and pre reg table and make it required and also update validation rules and update database
