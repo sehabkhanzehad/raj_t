@@ -71,8 +71,14 @@ if (!function_exists('uniqueInAgency')) {
     function uniqueInAgency(string $table, string $column, $ignore = null): Unique
     {
         // Note: This function uses the current agency
-        return Rule::unique($table, $column)
-            ->where('agency_id', currentAgency()->id)
-            ->ignore($ignore);
+        return Rule::unique($table, $column)->where('agency_id', currentAgency()->id)->ignore($ignore);
+    }
+}
+
+if (!function_exists('existsInAgency')) {
+    function existsInAgency($table, $column)
+    {
+        // Note: This function uses the current agency
+        return Rule::exists($table, $column)->where('agency_id', currentAgency()->id);
     }
 }

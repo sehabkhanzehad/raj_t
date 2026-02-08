@@ -27,6 +27,7 @@ Route::middleware(['auth:customer-api', ResolveAgency::class, ResolveYear::class
     require __DIR__ . '/web/umrahs.php';
     require __DIR__ . '/web/umrah-packages.php';
 
+
     // Accounts
     Route::get('/accounts/overview', [TransactionController::class, 'overview']);
     require __DIR__ . '/web/accounts/sections.php';

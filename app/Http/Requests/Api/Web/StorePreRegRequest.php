@@ -26,7 +26,7 @@ class StorePreRegRequest extends FormRequest
             'pilgrim_type' => ['required', 'in:existing,new'],
             'pilgrim_id' => [
                 Rule::requiredIf(fn() => $this->pilgrim_type === 'existing'),
-                'exists:pilgrims,id'
+                existsInAgency('pilgrims', 'id')
             ],
 
             'new_pilgrim' => [

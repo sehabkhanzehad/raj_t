@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PilgrimLogType;
 use App\Enums\RegistrationStatus;
+use App\Models\Traits\BelongsToAgency;
 use App\Traits\HasYear;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Registration extends Model
 {
-    use HasYear;
+    use BelongsToAgency, HasYear;
 
     protected $casts = [
         "date" => 'date',

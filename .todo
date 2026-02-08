@@ -3,5 +3,10 @@
 // -[] Need to update the group leader update method and its frontend part
 // -[] Need to update the group leader store frontend just
 
+// add country when creating pilgrim via pre reg or umrah, and check is alreay exists or not with country and nid also frontend
 
-// remove nullable from agency id from pilgrim and pre reg table and make it required and also update validation rules and update database
+// add unique constraint to registion table for agency, year, and pilgrim and pre reg
+
+// work with pilgrim log
+
+// remove nullable from umrah and registraion table

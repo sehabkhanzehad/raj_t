@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UmrahStatus;
+use App\Models\Traits\BelongsToAgency;
 use App\Models\Traits\HasPassport;
 use App\Traits\HasYear;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,8 @@ use App\Models\Transaction;
 
 class Umrah extends Model
 {
-    use HasPassport,
+    use BelongsToAgency,
+        HasPassport,
         HasYear;
 
     protected $casts = [

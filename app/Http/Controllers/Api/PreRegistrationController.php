@@ -113,7 +113,9 @@ class PreRegistrationController extends Controller
 
     public function pilgrims(): JsonResponse
     {
-        $pilgrims = User::whereHas('pilgrim')->get()->map(function ($user) {
+        $pilgrims = User::whereHas('pilgrim', function ($query) {
+            $query->where('agency_id', currentAgency()->id);
+        })->get()->map(function ($user) {
             return [
                 'type' => 'pilgrim',
                 'id' => $user->pilgrim->id,
